@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TechNauka</title>
+<meta name="theme-color" content="#c7410b">
+<meta name="description" content="Nauka PLC, elektryki, pneumatyki, hydrauliki i angielskiego technicznego.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}
+/* Układ: jedna kolumna (telefon), lepki nagłówek, dolny pasek zakładek pod kciukiem. Papier schematowy w tle. */
+:root {
+  --bg: #eef1f3; --surface: #ffffff; --surface-2: #f5f7f8; --ink: #16202b; --muted: #5a6876; --line: #d3dae0;
+  --accent: #c7410b; --accent-ink: #ffffff; --accent-soft: #fde7da;
+  --ok: #19774d; --ok-soft: #dcf1e5; --bad: #bf2a2a; --bad-soft: #fae2e2;
+  --grid: rgba(22, 32, 43, .045); --shadow: 0 1px 2px rgba(22, 32, 43, .06), 0 4px 14px rgba(22, 32, 43, .05);
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --nav-h: 64px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141a; --surface: #172029; --surface-2: #1c2731; --ink: #e4eaef; --muted: #93a3b1; --line: #2a3744;
+    --accent: #ff7a3a; --accent-ink: #1b0c04; --accent-soft: #3a2316;
+    --ok: #4cc58b; --ok-soft: #133022; --bad: #ff6b6b; --bad-soft: #3a1818;
+    --grid: rgba(228, 234, 239, .04); --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141a; --surface: #172029; --surface-2: #1c2731; --ink: #e4eaef; --muted: #93a3b1; --line: #2a3744;
+  --accent: #ff7a3a; --accent-ink: #1b0c04; --accent-soft: #3a2316;
+  --ok: #4cc58b; --ok-soft: #133022; --bad: #ff6b6b; --bad-soft: #3a1818;
+  --grid: rgba(228, 234, 239, .04); --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 16px/1.5 var(--f-body);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 620px; margin: 0 auto; }
+
+/* Nagłówek */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 10px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 8px; font: 700 22px/1 var(--f-display); letter-spacing: .02em; text-decoration: none; color: var(--ink); }
+.brand svg { width: 28px; height: 28px; }
+.streak { display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1 var(--f-display); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.streak b { color: var(--accent); font-size: 18px; }
+
+main { padding-block: 18px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.1; text-wrap: balance; margin: 0; }
+h1 { font-size: 34px; font-weight: 700; letter-spacing: .005em; }
+h2 { font-size: 24px; font-weight: 700; }
+h3 { font-size: 19px; font-weight: 600; }
+.lede { color: var(--muted); margin: 6px 0 0; }
+.eyebrow { font: 600 12px/1 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+/* Panele */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); }
+.today { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+.today .big { font: 700 44px/1 var(--f-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 360px) { .tiles { grid-template-columns: 1fr; } }
+.tile { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; min-width: 0; transition: border-color .15s, transform .15s; }
+.tile:hover { border-color: var(--accent); }
+.tile:active { transform: scale(.985); }
+.tile .ico { width: 34px; height: 34px; color: var(--accent); }
+.tile h3 { font-size: 20px; }
+.tile p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.35; }
+.meter { height: 6px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.stat { font: 600 14px/1 var(--f-display); letter-spacing: .03em; font-variant-numeric: tabular-nums; }
+
+/* Przyciski */
+.btn { appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 11px 16px; font: 600 16px/1.2 var(--f-display); letter-spacing: .03em; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; }
+.btn:hover { border-color: var(--ink); }
+.btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.pri:hover { filter: brightness(1.05); }
+.btn.wide { width: 100%; }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--bad); border-color: var(--bad); background: transparent; }
+.linkbtn { appearance: none; background: none; border: 0; padding: 4px 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 14px; }
+
+/* Chipy filtrów */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 13px; font: 600 15px/1 var(--f-display); letter-spacing: .03em; cursor: pointer; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { opacity: .7; font-variant-numeric: tabular-nums; margin-left: 4px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button { appearance: none; border: 0; background: none; padding: 8px 12px; font: 600 15px/1 var(--f-display); letter-spacing: .03em; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+
+/* Liczniki */
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.kpi b { display: block; font: 700 26px/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 12px; color: var(--muted); }
+
+/* Fiszka */
+.progress { display: flex; align-items: center; gap: 10px; }
+.progress .meter { flex: 1; }
+.flash { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 18px; min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: var(--shadow); cursor: pointer; text-align: center; }
+.flash .term { font: 700 34px/1.1 var(--f-display); overflow-wrap: anywhere; }
+.flash .tr { font: 600 24px/1.2 var(--f-display); color: var(--accent); overflow-wrap: anywhere; }
+.flash .ex { font-size: 16px; color: var(--muted); font-style: italic; }
+.flash .tag { position: absolute; top: 12px; left: 14px; }
+.flash .hint { font-size: 13px; color: var(--muted); }
+.flash hr { border: 0; border-top: 1px dashed var(--line); width: 60%; margin: 2px auto; }
+.say { appearance: none; border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; width: 40px; height: 40px; display: inline-grid; place-items: center; cursor: pointer; color: var(--ink); }
+.say svg { width: 20px; height: 20px; }
+.grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grade .btn { flex-direction: column; gap: 2px; min-height: 58px; }
+.grade .btn small { font: 400 12px/1 var(--f-body); color: inherit; opacity: .75; letter-spacing: 0; }
+.grade .again { border-color: var(--bad); color: var(--bad); }
+.grade .hard { border-color: var(--muted); }
+.grade .good { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+
+/* Lista słówek */
+.wlist { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.witem { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.witem:first-child { border-top: 0; }
+.witem .en { font-weight: 600; }
+.witem .pl { color: var(--muted); font-size: 14px; grid-column: 1; }
+.lvl { grid-row: 1 / span 2; align-self: center; display: flex; gap: 3px; }
+.lvl i { width: 6px; height: 14px; border-radius: 2px; background: var(--line); }
+.lvl i.on { background: var(--ok); }
+.search { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; }
+
+/* Quiz */
+.qhead { display: flex; flex-direction: column; gap: 8px; }
+.qprompt { font: 600 19px/1.35 var(--f-body); margin: 0; }
+.qprompt b { color: var(--accent); }
+.diagram { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; max-width: 440px; min-width: 280px; height: auto; margin: 0 auto; }
+pre.code { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; overflow-x: auto; font: 500 14px/1.6 var(--f-mono); }
+pre.code .blank { background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 0 4px; font-weight: 700; }
+code { font-family: var(--f-mono); font-size: .9em; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opt { appearance: none; text-align: left; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 12px 14px; cursor: pointer; font: 500 16px/1.35 var(--f-body); display: flex; gap: 10px; align-items: center; min-height: 52px; }
+.opt:hover:not([disabled]) { border-color: var(--ink); }
+.opt .k { flex: none; width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--line); display: grid; place-items: center; font: 700 14px/1 var(--f-display); color: var(--muted); }
+.opt.sym { flex-direction: column; text-align: center; gap: 6px; padding: 10px 8px; justify-content: flex-start; }
+.opt.sym .sy { width: 100%; max-width: 150px; height: 74px; }
+.opt.sym .sy.v { height: 92px; }
+.opt .tg { font: 600 13px/1.2 var(--f-mono); color: var(--muted); }
+.opt .nm { font-size: 13px; line-height: 1.3; }
+.opt.code { font-family: var(--f-mono); font-weight: 600; }
+.opt[disabled] { cursor: default; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.dim { opacity: .55; }
+.explain { border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); background: var(--surface); }
+.explain .verdict { font: 700 20px/1.1 var(--f-display); }
+.explain.ok .verdict { color: var(--ok); }
+.explain.bad .verdict { color: var(--bad); }
+.explain p { margin: 0; }
+.explain b { font-weight: 700; }
+.symbig { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; place-items: center; }
+.symbig .sy { width: 100%; max-width: 280px; height: 150px; }
+.symbig .sy.v { height: 180px; }
+.en-term { font: 600 15px/1.3 var(--f-display); letter-spacing: .02em; color: var(--muted); }
+
+/* Atlas */
+.atlas { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.acard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.acard .sy { width: 100%; height: 70px; }
+.acard .sy.v { height: 84px; }
+.acard h3 { font-size: 16px; }
+.acard .en { font-size: 12px; color: var(--muted); font-style: italic; }
+.acard p { margin: 0; font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.acard .ok-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; margin-left: 6px; vertical-align: middle; }
+
+/* Podsumowanie */
+.score { font: 700 64px/1 var(--f-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.wronglist { margin: 0; padding-left: 18px; color: var(--muted); }
+
+/* SVG schematów */
+svg .ln { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+svg .ln.bgf { fill: var(--surface); }
+svg .lnf { fill: var(--ink); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+svg .fl { fill: var(--ink); stroke: none; }
+svg .dash { stroke-dasharray: 5 4; }
+svg .thick { stroke-width: 3.5; }
+svg .rail { stroke-width: 2.6; }
+svg .tx { fill: var(--ink); stroke: none; font: 600 13px var(--f-display); letter-spacing: .02em; }
+svg .tx.sm { font-size: 11.5px; }
+svg .tx.big { font-size: 17px; font-weight: 700; }
+svg .tx.mu { fill: var(--muted); }
+svg .tx.code { font-family: var(--f-mono); font-size: 11px; font-weight: 600; }
+svg .qb { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 4; }
+svg .qt { fill: var(--accent); stroke: none; font: 800 24px var(--f-display); }
+
+/* Dolny pasek */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-top: 1px solid var(--line); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+.tabs .wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.tabs a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 10px; text-decoration: none; color: var(--muted); font: 600 12px/1 var(--f-display); letter-spacing: .04em; }
+.tabs a svg { width: 24px; height: 24px; }
+.tabs a[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
+
+.foot { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+.confirm { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.sync-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); margin-right: 6px; vertical-align: middle; }
+.sync-dot.on { background: var(--ok); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#" aria-label="TechNauka – start"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><circle cx="16" cy="18" r="9" fill="none" stroke="var(--accent-ink)" stroke-width="2.4"/><path d="M16 18l5-5" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round"/><path d="M10 24h12M16 9V6" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round"/></svg>TechNauka</a>
+  <span class="streak" id="streak"></span>
+</div></header>
+<main><div class="wrap" id="view"></div></main>
+<nav class="tabs" aria-label="Moduły"><div class="wrap">
+  <a href="#" data-r=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>Start</a>
+  <a href="#fiszki" data-r="fiszki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="14" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10"/><path d="M10 9h6M10 13h4"/></svg>Fiszki</a>
+  <a href="#symbole" data-r="symbole"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14h6l8-6M15 14h7"/><path d="M15 11v6" /></svg>Symbole</a>
+  <a href="#schematy" data-r="schematy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M20 3v18M4 8h4M12 8h8M8 5v6M12 5v6M4 16h9"/><circle cx="16" cy="16" r="3"/><path d="M19 16h1"/></svg>Schematy</a>
+  <a href="#cisnienie" data-r="cisnienie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M8 17h8M12 5V3"/></svg>Ciśnienie</a>
+</div></nav>
+<script>
+"use strict";
+/* ===== Fiszki EN: [angielski, polski, przykład] ===== */
+const DECKS = {
+  off: { name: 'Offshore', cards: [
+    ['nacelle', 'gondola turbiny', 'The gearbox and the generator are inside the nacelle.'],
+    ['hub', 'piasta wirnika', 'The blades are bolted to the hub.'],
+    ['blade', 'łopata wirnika', 'We found damage on the leading edge of the blade.'],
+    ['tower', 'wieża', 'Climb the tower with the fall arrest system connected.'],
+    ['transition piece (TP)', 'element przejściowy (między fundamentem a wieżą)', 'The boat landing is on the transition piece.'],
+    ['monopile', 'monopal (fundament z jednej rury)', 'The monopile is driven into the seabed.'],
+    ['jacket foundation', 'fundament kratownicowy', 'Jacket foundations are used in deeper water.'],
+    ['yaw system', 'układ obrotu gondoli (yaw)', 'The yaw system turns the nacelle into the wind.'],
+    ['pitch system', 'układ zmiany kąta łopat (pitch)', 'A pitch fault stopped the turbine.'],
+    ['gearbox', 'przekładnia', 'Check the gearbox oil level and take a sample.'],
+    ['main bearing', 'łożysko główne', 'The main bearing needs more grease.'],
+    ['converter', 'przekształtnik (falownik)', 'The converter cabinet is at the bottom of the tower.'],
+    ['switchgear', 'rozdzielnica', 'Only an authorised person may operate the switchgear.'],
+    ['slip ring', 'pierścień ślizgowy', 'Clean the slip ring and check the brushes.'],
+    ['anemometer', 'anemometr', 'The anemometer on the nacelle measures wind speed.'],
+    ['rotor lock', 'blokada wirnika', 'Engage the rotor lock before you enter the hub.'],
+    ['brake', 'hamulec', 'Apply the mechanical brake before the rotor lock.'],
+    ['service crane', 'żuraw serwisowy', 'Lift the toolbox with the service crane.'],
+    ['crew transfer vessel (CTV)', 'statek do przewozu załogi', 'The CTV leaves the harbour at six in the morning.'],
+    ['service operation vessel (SOV)', 'statek serwisowy z zakwaterowaniem', 'We live on the SOV for the whole rotation.'],
+    ['walk-to-work gangway', 'pomost kompensowany (przejście ze statku)', 'We transferred to the turbine using the walk-to-work gangway.'],
+    ['boat landing', 'pomost cumowniczy przy TP', 'The boat pushes its bow against the boat landing.'],
+    ['transfer', 'przejście ze statku na turbinę', 'The skipper cancelled the transfer because of the waves.'],
+    ['significant wave height', 'znacząca wysokość fali (Hs)', 'Transfers stop when the significant wave height is above the limit.'],
+    ['weather window', 'okno pogodowe', 'We need a two-day weather window for the blade repair.'],
+    ['rotation', 'rotacja (system zmian)', 'I work a two weeks on, two weeks off rotation.'],
+    ['shift handover', 'przekazanie zmiany', 'Write the open faults in the shift handover.'],
+    ['fall arrest system', 'system chroniący przed upadkiem', 'Always clip in to the fall arrest system on the ladder.'],
+    ['harness', 'szelki bezpieczeństwa', 'Inspect your harness before every climb.'],
+    ['lanyard', 'linka asekuracyjna (lonża)', 'Use a twin lanyard when you move between anchor points.'],
+    ['anchor point', 'punkt kotwiczenia', 'This anchor point is rated for one person.'],
+    ['PPE', 'środki ochrony indywidualnej (ŚOI)', 'Wear full PPE on the deck.'],
+    ['lifejacket', 'kamizelka ratunkowa', 'Put on your lifejacket before you board the boat.'],
+    ['immersion suit', 'kombinezon ratunkowy (do wody)', 'Immersion suits are stored next to the muster point.'],
+    ['muster point', 'miejsce zbiórki alarmowej', 'Go to the muster point when you hear the alarm.'],
+    ['drill', 'ćwiczenia alarmowe', 'We have an abandon ship drill every week.'],
+    ['permit to work (PTW)', 'pozwolenie na pracę', 'You cannot start the job without a permit to work.'],
+    ['lockout/tagout (LOTO)', 'blokada i oznakowanie źródeł energii', 'Apply LOTO before you open the cabinet.'],
+    ['isolation', 'odłączenie energii (izolacja)', 'Confirm the isolation with a voltage tester.'],
+    ['authorised person', 'osoba upoważniona', 'Ask the authorised person to sign the permit.'],
+    ['high voltage (HV)', 'wysokie napięcie', 'HV switching is done only by authorised persons.'],
+    ['risk assessment', 'ocena ryzyka', 'Read the risk assessment before you start.'],
+    ['method statement', 'opis metody wykonania pracy', 'Follow the method statement step by step.'],
+    ['toolbox talk', 'krótka odprawa przed pracą', 'The supervisor gave a toolbox talk about lifting.'],
+    ['stop work authority', 'prawo do wstrzymania pracy', 'Everyone on site has stop work authority.'],
+    ['near miss', 'zdarzenie potencjalnie wypadkowe', 'Report every near miss, even a small one.'],
+    ['dropped object', 'spadający przedmiot', 'Tether your tools to prevent dropped objects.'],
+    ['housekeeping', 'porządek na stanowisku pracy', 'Good housekeeping prevents slips and trips.'],
+    ['confined space', 'przestrzeń zamknięta (ograniczona)', 'The hub is treated as a confined space.'],
+    ['rescue kit', 'zestaw ratowniczy', 'The rescue kit is stored in the nacelle.'],
+    ['work order', 'zlecenie pracy', 'Close the work order in the system after the job.'],
+    ['troubleshooting', 'diagnozowanie usterek', 'Troubleshooting the pitch fault took three hours.'],
+    ['fault code', 'kod błędu', 'SCADA shows a fault code for the yaw motor.'],
+    ['preventive maintenance', 'konserwacja zapobiegawcza', 'The annual preventive maintenance starts tomorrow.'],
+    ['corrective maintenance', 'naprawa usterki (konserwacja korekcyjna)', 'This is corrective maintenance after a failure.'],
+    ['bolt tensioning', 'napinanie śrub (hydrauliczne)', 'Bolt tensioning on the tower flange takes a full day.'],
+    ['hydraulic torque wrench', 'hydrauliczny klucz dynamometryczny', 'Set the pump pressure for the hydraulic torque wrench.'],
+    ['corrosion', 'korozja', 'There is corrosion on the platform railing.'],
+    ['seasickness', 'choroba morska', 'Take a tablet before the trip if you get seasickness.'],
+    ['GWO Basic Safety Training', 'podstawowe szkolenie BHP GWO (BST)', 'You need valid GWO Basic Safety Training to go offshore.'],
+    ['Sea Survival', 'przetrwanie na morzu (moduł GWO)', 'In Sea Survival we practised boarding a life raft.'],
+    ['Working at Heights', 'praca na wysokości (moduł GWO)', 'Working at Heights covers rescue from the ladder.'],
+  ]},
+
+  met: { name: 'Metrologia', cards: [
+    ['calibration', 'wzorcowanie (kalibracja)', 'The pressure gauge is due for calibration next month.'],
+    ['measurement uncertainty', 'niepewność pomiaru', 'Every result must be reported with its measurement uncertainty.'],
+    ['expanded uncertainty', 'niepewność rozszerzona', 'The expanded uncertainty is 0.2 bar for k = 2.'],
+    ['coverage factor', 'współczynnik rozszerzenia (k)', 'We use a coverage factor of k = 2 for about 95 % confidence.'],
+    ['traceability', 'spójność pomiarowa', 'Our standards have traceability to national standards.'],
+    ['accuracy', 'dokładność', 'The accuracy of this transducer is 0.1 % of full scale.'],
+    ['precision', 'precyzja (rozrzut wyników)', 'High precision does not always mean high accuracy.'],
+    ['repeatability', 'powtarzalność', 'We took five readings to check repeatability.'],
+    ['reproducibility', 'odtwarzalność', 'Reproducibility is tested with a different operator.'],
+    ['resolution', 'rozdzielczość', 'The display resolution is 0.1 N·m.'],
+    ['tolerance', 'tolerancja', 'The reading is within the tolerance of ±4 %.'],
+    ['maximum permissible error (MPE)', 'błąd graniczny dopuszczalny', 'The error must not exceed the maximum permissible error.'],
+    ['error of indication', 'błąd wskazania', 'The error of indication is the reading minus the reference value.'],
+    ['deviation', 'odchyłka', 'The deviation at 100 bar is +0.6 bar.'],
+    ['correction', 'poprawka', 'Apply the correction from the calibration certificate.'],
+    ['reference standard', 'wzorzec odniesienia', 'The reference standard is kept in the lab.'],
+    ['working standard', 'wzorzec roboczy', 'We check the working standard against the reference standard.'],
+    ['calibration certificate', 'świadectwo wzorcowania', 'Attach the calibration certificate to the report.'],
+    ['calibration interval', 'okres między wzorcowaniami', 'The calibration interval for torque wrenches is twelve months.'],
+    ['due date', 'termin następnego wzorcowania', 'The due date is printed on the calibration label.'],
+    ['out of tolerance', 'poza tolerancją', 'The torque wrench was out of tolerance at 20 % of range.'],
+    ['as found / as left', 'stan przed regulacją / po regulacji', 'Record both as-found and as-left values.'],
+    ['adjustment', 'regulacja (adiustacja)', 'An adjustment was made before the as-left readings.'],
+    ['verification', 'sprawdzenie (weryfikacja)', 'Verification shows if the instrument meets the specification.'],
+    ['torque wrench', 'klucz dynamometryczny', 'Click-type torque wrenches are tested at 20, 60 and 100 %.'],
+    ['torque screwdriver', 'wkrętak dynamometryczny', 'Set the torque screwdriver to 2 N·m.'],
+    ['torque transducer', 'przetwornik momentu', 'The torque transducer is connected to the display unit.'],
+    ['pressure gauge', 'manometr', 'Tap the pressure gauge gently before you read it.'],
+    ['deadweight tester', 'ciśnieniomierz obciążnikowo-tłokowy', 'The deadweight tester generates a very stable pressure.'],
+    ['pressure transmitter', 'przetwornik ciśnienia', 'The pressure transmitter gives a 4–20 mA signal.'],
+    ['measuring range', 'zakres pomiarowy', 'The measuring range is 0 to 250 bar.'],
+    ['full scale (FS)', 'pełna skala (górna granica zakresu)', 'Accuracy is ±0.5 % of full scale.'],
+    ['accuracy class', 'klasa dokładności', 'A class 1.6 gauge has an MPE of 1.6 % of the range.'],
+    ['zero offset', 'przesunięcie zera', 'There was a zero offset of 0.2 bar.'],
+    ['drift', 'dryft (zmiana w czasie)', 'Long-term drift is checked between calibrations.'],
+    ['hysteresis', 'histereza', 'Hysteresis is the difference between rising and falling readings.'],
+    ['rising / falling pressure', 'ciśnienie wzrastające / malejące', 'Take readings at rising and falling pressure.'],
+    ['clockwise / counterclockwise', 'w prawo / w lewo (zgodnie / przeciwnie do wskazówek zegara)', 'This wrench is calibrated clockwise only.'],
+    ['ambient temperature', 'temperatura otoczenia', 'The ambient temperature was 20 ± 2 °C.'],
+    ['relative humidity', 'wilgotność względna', 'Relative humidity in the lab is logged every hour.'],
+    ['nominal value', 'wartość nominalna', 'The nominal value is 50 N·m.'],
+    ['reading', 'odczyt (wskazanie)', 'Write down three readings at each test point.'],
+    ['test point', 'punkt pomiarowy', 'We use five test points across the range.'],
+    ['mean value', 'wartość średnia', 'The mean value of five readings is 49.8 N·m.'],
+    ['standard deviation', 'odchylenie standardowe', 'The standard deviation shows the spread of the readings.'],
+    ['accreditation', 'akredytacja', 'The lab has accreditation to ISO/IEC 17025.'],
+    ['nonconformity', 'niezgodność', 'An expired standard is a nonconformity.'],
+    ['equipment register', 'rejestr (ewidencja) wyposażenia', 'Add the new gauge to the equipment register.'],
+  ]},
+
+  plc: { name: 'PLC i automatyka', cards: [
+    ['input / output (I/O)', 'wejście / wyjście', 'Check the I/O status on the PLC LEDs.'],
+    ['digital input', 'wejście cyfrowe (dwustanowe)', 'The limit switch is wired to a digital input.'],
+    ['analog input', 'wejście analogowe', 'The 4–20 mA signal goes to the analog input card.'],
+    ['ladder logic', 'język drabinkowy (LD)', 'The program is written in ladder logic.'],
+    ['structured text', 'tekst strukturalny (ST)', 'I prefer structured text for state machines.'],
+    ['rung', 'szczebel (w drabince)', 'The motor output is on rung 12.'],
+    ['normally open contact', 'styk normalnie otwarty (NO, zwierny)', 'The start button has a normally open contact.'],
+    ['normally closed contact', 'styk normalnie zamknięty (NC, rozwierny)', 'The stop button has a normally closed contact.'],
+    ['coil', 'cewka', 'The coil energises the output.'],
+    ['seal-in / latch', 'podtrzymanie (samopodtrzymanie)', 'Add a seal-in contact so the motor keeps running.'],
+    ['interlock', 'blokada (wzajemna)', 'There is an interlock between forward and reverse.'],
+    ['on-delay timer', 'timer opóźnionego załączenia (TON)', 'Use an on-delay timer of five seconds.'],
+    ['off-delay timer', 'timer opóźnionego wyłączenia (TOF)', 'The fan keeps running on an off-delay timer.'],
+    ['counter', 'licznik', 'The counter resets after every batch.'],
+    ['rising edge', 'zbocze narastające', 'Count only on the rising edge of the sensor.'],
+    ['falling edge', 'zbocze opadające', 'The falling edge starts the next step.'],
+    ['scan cycle', 'cykl programu (skanu)', 'The scan cycle time is about five milliseconds.'],
+    ['tag / variable', 'zmienna (tag)', 'Give every tag a clear name.'],
+    ['function block', 'blok funkcyjny', 'I wrote a function block for the valve control.'],
+    ['state machine', 'automat stanów (sekwencja kroków)', 'The sorting station runs as a state machine.'],
+    ['proximity sensor', 'czujnik zbliżeniowy', 'The inductive proximity sensor detects metal parts.'],
+    ['photoelectric sensor', 'czujnik optyczny (fotoelektryczny)', 'The photoelectric sensor sees the box on the conveyor.'],
+    ['limit switch', 'wyłącznik krańcowy', 'The limit switch stops the cylinder at the end.'],
+    ['actuator', 'element wykonawczy', 'Valves and motors are actuators.'],
+    ['solenoid valve', 'elektrozawór (zawór z elektromagnesem)', 'The solenoid valve controls the cylinder.'],
+    ['relay', 'przekaźnik', 'The PLC output drives a relay.'],
+    ['contactor', 'stycznik', 'The contactor switches the motor power.'],
+    ['overload relay', 'przekaźnik termiczny (przeciążeniowy)', 'The overload relay tripped because the motor was jammed.'],
+    ['emergency stop', 'wyłącznik awaryjny', 'Press the emergency stop and reset the safety relay.'],
+    ['safety relay', 'przekaźnik bezpieczeństwa', 'The emergency stop is wired to a safety relay.'],
+    ['fieldbus', 'magistrala polowa', 'The drives communicate over a fieldbus.'],
+    ['HMI', 'panel operatorski', 'The operator resets the alarm on the HMI.'],
+    ['commissioning', 'uruchomienie (rozruch instalacji)', 'Commissioning on site took two weeks.'],
+    ['wiring diagram', 'schemat połączeń', 'Check the terminal numbers in the wiring diagram.'],
+    ['control cabinet', 'szafa sterownicza', 'The PLC is mounted in the control cabinet.'],
+    ['terminal block', 'złączka (listwa zaciskowa)', 'Connect the sensor to terminal block X2.'],
+    ['cable gland', 'dławik kablowy', 'Tighten the cable gland to keep the cabinet sealed.'],
+    ['setpoint', 'wartość zadana', 'Change the temperature setpoint to 60 °C.'],
+    ['feedback', 'sprzężenie zwrotne', 'The encoder gives position feedback.'],
+    ['PID controller', 'regulator PID', 'Tune the PID controller to reduce overshoot.'],
+    ['variable frequency drive (VFD)', 'falownik (przemiennik częstotliwości)', 'The VFD controls the pump speed.'],
+    ['encoder', 'enkoder', 'The encoder counts 1024 pulses per revolution.'],
+    ['servo drive', 'serwonapęd', 'The servo drive shows an overcurrent fault.'],
+    ['download (to the PLC)', 'wgrać program do sterownika', 'Download the project to the PLC after the change.'],
+    ['upload (from the PLC)', 'odczytać program ze sterownika', 'Upload the program first to get a backup.'],
+    ['go online', 'połączyć się online ze sterownikiem', 'Go online to watch the values live.'],
+    ['force a variable', 'wymusić wartość zmiennej', 'Never force an output without checking the machine.'],
+    ['short circuit', 'zwarcie', 'A short circuit blew the fuse.'],
+    ['earth fault', 'doziemienie (zwarcie z ziemią)', 'The insulation test found an earth fault.'],
+    ['open circuit', 'przerwa w obwodzie', 'The sensor shows an open circuit: check the wire.'],
+    ['voltage drop', 'spadek napięcia', 'A long cable causes a voltage drop.'],
+  ]},
+};
+
+/* ===== Rysowanie SVG: prymitywy, symbole, schematy ===== */
+const f1 = n => +(+n).toFixed(1);
+const P = (d, c = 'ln') => `<path class="${c}" d="${d}"/>`;
+const Ci = (x, y, r, c = 'ln') => `<circle class="${c}" cx="${x}" cy="${y}" r="${r}"/>`;
+const Re = (x, y, w, h, c = 'ln', rx = 0) => `<rect class="${c}" x="${x}" y="${y}" width="${w}" height="${h}"${rx ? ` rx="${rx}"` : ''}/>`;
+const Tx = (x, y, s, c = 'tx', a = 'middle') => `<text class="${c}" x="${x}" y="${y}" text-anchor="${a}">${s}</text>`;
+function head(x, y, ang, s = 6) {
+  const a1 = ang + 2.6, a2 = ang - 2.6;
+  return P(`M${f1(x)} ${f1(y)}L${f1(x + s * Math.cos(a1))} ${f1(y + s * Math.sin(a1))}L${f1(x + s * Math.cos(a2))} ${f1(y + s * Math.sin(a2))}Z`, 'fl');
+}
+function Ar(x1, y1, x2, y2, s = 6) {
+  const a = Math.atan2(y2 - y1, x2 - x1);
+  const ex = x2 - Math.cos(a) * s * 0.6, ey = y2 - Math.sin(a) * s * 0.6;
+  return P(`M${f1(x1)} ${f1(y1)}L${f1(ex)} ${f1(ey)}`) + head(x2, y2, a, s);
+}
+const W = pts => P('M' + pts.map(p => p.join(' ')).join('L'));
+const dot = (x, y) => Ci(x, y, 3, 'fl');
+function QB(cx, cy, w = 44, h = 44) {
+  return Re(cx - w / 2, cy - h / 2, w, h, 'qb', 6) + `<text class="qt" x="${cx}" y="${cy + 8}" text-anchor="middle">?</text>`;
+}
+const svgW = (vb, inner, label = 'Schemat') => `<svg class="dg" viewBox="${vb}" role="img" aria-label="${label}">${inner}</svg>`;
+
+/* ---- Elektryczne IEC 60617: lokalnie poziomo, zaciski (0,0) i (60,0) ---- */
+const ES = {
+  no: () => P('M0 0H20L41 -11M40 0H60'),
+  nc: () => P('M0 0H20L46 10M40 0H60M40 0V11'),
+  pbNO: () => ES.no() + P('M30.5 -5.5V-17', 'ln dash') + P('M24 -13V-17H37V-13'),
+  pbNC: () => ES.nc() + P('M33 5V17', 'ln dash') + P('M26.5 13V17H39.5V13'),
+  estop: () => ES.nc() + P('M33 5V16', 'ln dash') + P('M25 16H41A8 8 0 0 1 25 16Z', 'ln bgf'),
+  coil: () => P('M0 0H22M38 0H60') + Re(22, -12, 16, 24, 'ln bgf'),
+  fuse: () => P('M0 0H60') + Re(16, -6, 28, 12) ,
+  cb: () => ES.no() + P('M36 -4L44 4M36 4L44 -4'),
+  kmain: () => ES.no() + P('M44 0A4 4 0 0 0 36 0'),
+  therm: () => P('M0 0H16M44 0H60') + Re(16, -10, 28, 20, 'ln bgf') + P('M21 4H26V-4H34V4H39'),
+  olNC: () => ES.nc() + P('M33 5V14', 'ln dash') + P('M24.5 20H28.5V14H37.5V20H41.5'),
+  lamp: () => P('M0 0H19M41 0H60') + Ci(30, 0, 11, 'ln bgf') + P('M22.2 -7.8L37.8 7.8M22.2 7.8L37.8 -7.8'),
+  res: () => P('M0 0H18M42 0H60') + Re(18, -6, 24, 12, 'ln bgf'),
+  cap: () => P('M0 0H27M33 0H60M27 -11V11M33 -11V11'),
+  diode: () => P('M0 0H22M38 0H60') + P('M22 -9L22 9L38 0Z', 'lnf') + P('M38 -9V9'),
+  led: () => ES.diode() + Ar(27, -12, 33, -21, 4) + Ar(34, -12, 40, -21, 4),
+  ind: () => P('M0 0H15A5 5 0 0 1 25 0A5 5 0 0 1 35 0A5 5 0 0 1 45 0H60'),
+  bat: () => P('M0 0H27M33 0H60M27 -12V12') + P('M33 -6V6', 'ln thick'),
+  trafo: () => P('M0 0H14M46 0H60') + Ci(24, 0, 10) + Ci(36, 0, 10),
+  earth: () => P('M0 0H24M24 -12V12M29 -8V8M34 -4V4'),
+  pe: () => P('M0 0H24M24 -9V9M29 -6V6M34 -3V3') + Ci(29, 0, 14),
+  amm: () => P('M0 0H18M42 0H60') + Ci(30, 0, 12, 'ln bgf') + Tx(30, 5, 'A'),
+  volt: () => P('M0 0H18M42 0H60') + Ci(30, 0, 12, 'ln bgf') + Tx(30, 5, 'V'),
+  motor: () => P('M0 0H12') + Ci(31, 0, 19, 'ln bgf') + Tx(31, 1, 'M', 'tx big') + Tx(31, 13, '3~', 'tx sm'),
+};
+/* ---- Drabinka PLC (IEC 61131-3 LD) ---- */
+const LS = {
+  no: () => P('M0 0H23M37 0H60M23 -12V12M37 -12V12'),
+  nc: () => LS.no() + P('M25.5 10L34.5 -10'),
+  p: () => LS.no() + Tx(30, 4.5, 'P', 'tx sm'),
+  n: () => LS.no() + Tx(30, 4.5, 'N', 'tx sm'),
+  coil: () => P('M0 0H19.6M40.4 0H60M25 -12A16 16 0 0 0 25 12M35 -12A16 16 0 0 1 35 12'),
+  ncoil: () => LS.coil() + P('M26.5 9L33.5 -9'),
+  set: () => LS.coil() + Tx(30, 4.5, 'S', 'tx sm'),
+  reset: () => LS.coil() + Tx(30, 4.5, 'R', 'tx sm'),
+};
+function FB(x, y, w, title, ins, outs, o = {}) {
+  const gap = o.gap || 22, rows = Math.max(ins.length, outs.length);
+  const h = 30 + (rows - 1) * gap + 22;
+  let s = Re(x, y, w, h, o.q ? 'qb' : 'ln bgf', 3);
+  s += o.q ? `<text class="qt" x="${x + w / 2}" y="${y + 22}" text-anchor="middle">?</text>` : Tx(x + w / 2, y + 17, title, 'tx');
+  ins.forEach((p, i) => { const py = y + 30 + i * gap; s += P(`M${x - 10} ${py}H${x}`) + Tx(x + 5, py + 4, p, 'tx sm', 'start'); });
+  outs.forEach((p, i) => { const py = y + 30 + i * gap; s += P(`M${x + w} ${py}H${x + w + 10}`) + Tx(x + w - 5, py + 4, p, 'tx sm', 'end'); });
+  return s;
+}
+
+/* Opakowania symboli do quizu i atlasu */
+const hsym = inner => `<svg class="sy" viewBox="-6 -28 72 56" aria-hidden="true">${inner}</svg>`;
+const vsym = (inner, dir = 'down') => dir === 'down'
+  ? `<svg class="sy v" viewBox="-28 -6 56 72" aria-hidden="true"><g transform="rotate(90)">${inner}</g></svg>`
+  : `<svg class="sy v" viewBox="-28 -66 56 72" aria-hidden="true"><g transform="rotate(-90)">${inner}</g></svg>`;
+const box = (vb, inner) => `<svg class="sy" viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
+
+/* ---- Pneumatyka / hydraulika ISO 1219 (współrzędne bezwzględne) ---- */
+function spring(x, y, dir = 1, adj = false) {
+  const pts = [[3, -6], [7, 6], [11, -6], [15, 6], [18, 0]];
+  let d = `M${x} ${y}`; pts.forEach(([dx, dy]) => d += `L${x + dir * dx} ${y + dy}`);
+  return P(d) + (adj ? Ar(x + dir * 1, y + 10, x + dir * 19, y - 10, 5) : '');
+}
+const exh = (x, y) => P(`M${x} ${y}V${y + 5}`) + P(`M${x - 4} ${y + 5}H${x + 4}L${x} ${y + 11}Z`, 'ln bgf');
+const FL = {
+  pump: (x, y, hyd = true) => Ci(x, y, 14, 'ln bgf') + P(`M${x} ${y - 14}L${x - 6} ${y - 5}L${x + 6} ${y - 5}Z`, hyd ? 'lnf' : 'ln bgf'),
+  hmotor: (x, y) => Ci(x, y, 14, 'ln bgf') + P(`M${x} ${y - 3}L${x - 5.5} ${y - 12}L${x + 5.5} ${y - 12}Z`, 'lnf'),
+  emotor: (x, y) => Ci(x, y, 14, 'ln bgf') + Tx(x, y + 5, 'M'),
+  shaft: (x1, x2, y) => P(`M${x1} ${y - 2.5}H${x2}M${x1} ${y + 2.5}H${x2}`),
+  tank: (x, y) => P(`M${x - 14} ${y}V${y + 12}H${x + 14}V${y}`),
+  gauge: (x, y) => Ci(x, y, 10, 'ln bgf') + Ar(x - 6, y + 6, x + 6.5, y - 6.5, 5),
+  filter: (x, y) => P(`M${x} ${y - 12}L${x + 12} ${y}L${x} ${y + 12}L${x - 12} ${y}Z`, 'ln bgf') + P(`M${x - 12} ${y}H${x + 12}`, 'ln dash'),
+  check: (x, y, up = true) => { const s = up ? 1 : -1; return P(`M${x - 9} ${y - 2 * s}L${x} ${y + 8 * s}L${x + 9} ${y - 2 * s}`) + Ci(x, y, 5.5, 'ln bgf'); },
+  relief: (x, y) => Re(x - 14, y - 14, 28, 28, 'ln bgf') + Ar(x - 8, y - 10, x - 8, y + 10, 5) + P(`M${x} ${y - 22}H${x - 26}V${y}H${x - 14}`, 'ln dash') + spring(x + 14, y, 1, true),
+  reducing: (x, y) => Re(x - 14, y - 14, 28, 28, 'ln bgf') + Ar(x, y - 10, x, y + 10, 5) + P(`M${x} ${y + 22}H${x - 26}V${y}H${x - 14}`, 'ln dash') + spring(x + 14, y, 1, true),
+  throttle: (x, y, adj = true) => P(`M${x} ${y - 14}V${y + 14}`) + P(`M${x - 7} ${y - 12}Q${x - 1} ${y} ${x - 7} ${y + 12}M${x + 7} ${y - 12}Q${x + 1} ${y} ${x + 7} ${y + 12}`) + (adj ? Ar(x - 12, y + 11, x + 12, y - 11, 5) : ''),
+  oneway: (x, y, freeUp = true) => {
+    const cx = x + 24;
+    let s = FL.throttle(x, y) + P(`M${x} ${y - 24}V${y - 14}M${x} ${y + 14}V${y + 24}`);
+    s += P(`M${x} ${y - 19}H${cx}M${x} ${y + 19}H${cx}`) + dot(x, y - 19) + dot(x, y + 19);
+    s += freeUp ? P(`M${cx} ${y + 19}V${y + 8}M${cx} ${y - 5.5}V${y - 19}`) : P(`M${cx} ${y - 19}V${y - 8}M${cx} ${y + 5.5}V${y + 19}`);
+    return s + FL.check(cx, y, freeUp);
+  },
+  cylDA: (x, y, w = 120) => Re(x, y, w, 24, 'ln bgf') + Re(x + 28, y + 9.5, w - 28 + 34, 5, 'ln bgf') + P(`M${x + 28} ${y}V${y + 24}`, 'ln thick'),
+  cylSA: (x, y, w = 120) => {
+    let s = Re(x, y, w, 24, 'ln bgf') + Re(x + 28, y + 9.5, w - 28 + 34, 5, 'ln bgf');
+    const k = 8, x0 = x + 31, x1 = x + w - 3; let d = `M${x0} ${y + 12}`;
+    for (let i = 1; i < k; i++) d += `L${f1(x0 + (x1 - x0) * i / k)} ${i % 2 ? y + 4 : y + 20}`;
+    d += `L${x1} ${y + 12}`;
+    return s + P(d) + P(`M${x + 28} ${y}V${y + 24}`, 'ln thick');
+  },
+  shuttle: (x, y) => Re(x - 22, y - 9, 44, 18, 'ln bgf') + P(`M${x - 10} ${y - 6}L${x - 17} ${y}L${x - 10} ${y + 6}M${x + 10} ${y - 6}L${x + 17} ${y}L${x + 10} ${y + 6}`) + Ci(x, y, 5),
+  accum: (x, y) => Re(x - 10, y - 18, 20, 36, 'ln bgf', 10) + P(`M${x - 10} ${y}H${x + 10}`),
+};
+/* Rozdzielacze: kwadraty 36 px, porty T/B + pozycja w px */
+const VS = 36;
+const vpos = c => [+c.slice(1), c[0] === 'T' ? 0 : VS];
+function actuator(type, x, ym, dir) {
+  if (type === 'spring') return { s: spring(x, ym, dir), x: x + dir * 18 };
+  if (type === 'sol') { const x0 = dir < 0 ? x - 12 : x; return { s: Re(x0, ym - 9, 12, 18, 'ln bgf') + P(`M${x0} ${ym + 9}L${x0 + 12} ${ym - 9}`), x: x + dir * 12 }; }
+  if (type === 'push') return { s: P(`M${x} ${ym}H${x + dir * 8}`) + P(`M${x + dir * 8} ${ym - 7}A7 7 0 0 ${dir < 0 ? 0 : 1} ${x + dir * 8} ${ym + 7}`), x: x + dir * 15 };
+  if (type === 'lever') return { s: P(`M${x} ${ym}H${x + dir * 6}L${x + dir * 16} ${ym - 11}`) + Ci(x + dir * 17.5, ym - 12.5, 2.5, 'ln bgf'), x: x + dir * 20 };
+  return { s: '', x };
+}
+function valve(x, y, squares, left = [], right = []) {
+  let s = '';
+  squares.forEach((els, i) => {
+    const ox = x + i * VS; s += Re(ox, y, VS, VS, 'ln bgf');
+    els.forEach(e => {
+      if (e[0] === 'a') {
+        const [x1, y1] = vpos(e[1]), [x2, y2] = vpos(e[2]);
+        s += Ar(ox + x1, y + (y1 ? VS - 4 : 4), ox + x2, y + (y2 ? VS - 4 : 4), 5);
+      } else {
+        const [px, py] = vpos(e[1]); const yb = y + py + (py ? -10 : 10);
+        s += P(`M${ox + px} ${y + py}V${yb}M${ox + px - 5} ${yb}H${ox + px + 5}`);
+      }
+    });
+  });
+  let lx = x; left.forEach(a => { const r = actuator(a, lx, y + VS / 2, -1); s += r.s; lx = r.x; });
+  let rx = x + squares.length * VS; right.forEach(a => { const r = actuator(a, rx, y + VS / 2, 1); s += r.s; rx = r.x; });
+  return s;
+}
+const V32 = [[['a', 'B12', 'T12'], ['t', 'B24']], [['t', 'B12'], ['a', 'T12', 'B24']]];
+const V22 = [[['a', 'B18', 'T18']], [['t', 'B18'], ['t', 'T18']]];
+const V42 = [[['a', 'B12', 'T24'], ['a', 'T12', 'B24']], [['a', 'B12', 'T12'], ['a', 'T24', 'B24']]];
+const V42L = [[['a', 'B12', 'T12'], ['a', 'T24', 'B24']], [['a', 'B12', 'T24'], ['a', 'T12', 'B24']]];
+const V52 = [[['a', 'B18', 'T12'], ['a', 'T24', 'B27']], [['a', 'B18', 'T24'], ['a', 'T12', 'B9']]];
+const V43 = [[['a', 'B12', 'T12'], ['a', 'T24', 'B24']], [['t', 'T12'], ['t', 'T24'], ['t', 'B12'], ['t', 'B24']], [['a', 'B12', 'T24'], ['a', 'T12', 'B24']]];
+
+/* Gotowe symbole płynowe do opcji/atlasu */
+const FSYM = {
+  pump: () => box('0 0 100 76', P('M50 26V6') + FL.pump(50, 40) + P('M50 54V70')),
+  comp: () => box('0 0 100 76', P('M50 26V6') + FL.pump(50, 40, false) + P('M50 54V70')),
+  hmot: () => box('0 0 100 76', P('M50 26V6M50 54V70') + FL.hmotor(50, 40)),
+  emot: () => box('0 0 100 76', FL.emotor(42, 38) + FL.shaft(56, 84, 38)),
+  tank: () => box('0 0 100 76', P('M50 14V40') + FL.tank(50, 34)),
+  filter: () => box('0 0 100 76', P('M50 6V26M50 50V70') + FL.filter(50, 38)),
+  check: () => box('0 0 100 76', P('M50 6V32.5M50 46V70') + FL.check(50, 38)),
+  relief: () => box('0 0 110 84', P('M50 4V26M50 54V64') + FL.relief(50, 40) + FL.tank(50, 64) + Tx(36, 12, 'we', 'tx sm mu', 'end')),
+  reducing: () => box('0 0 110 84', P('M50 4V26M50 54V78') + FL.reducing(50, 40) + Tx(36, 12, 'we', 'tx sm mu', 'end') + Tx(58, 78, 'wy', 'tx sm mu', 'start')),
+  reliefIO: () => box('0 0 110 84', P('M50 4V26M50 54V78') + FL.relief(50, 40) + Tx(36, 12, 'we', 'tx sm mu', 'end') + Tx(58, 78, 'wy', 'tx sm mu', 'start')),
+  throttle: () => box('0 0 100 76', P('M50 6V24M50 52V70') + FL.throttle(50, 38)),
+  oneway: (up = true) => box('0 0 100 80', P('M45 4V16M45 64V76') + FL.oneway(45, 40, up)),
+  v32: () => box('0 -4 110 72', valve(18, 14, V32, ['push'], ['spring']) + P('M66 14V2M66 50V62') + exh(78, 50)),
+  v22: () => box('0 -4 110 72', valve(18, 14, V22, ['push'], ['spring']) + P('M72 14V2M72 50V62')),
+  v42: () => box('0 -4 120 72', valve(22, 14, V42, ['sol'], ['spring']) + P('M70 14V2M82 14V2M70 50V62M82 50V62')),
+  v52: () => box('0 -4 120 72', valve(22, 14, V52, ['sol'], ['spring']) + P('M70 14V2M82 14V2M76 50V62') + exh(67, 50) + exh(85, 50)),
+  v43: () => box('0 -4 176 72', valve(34, 14, V43, ['spring', 'sol'], ['spring', 'sol']) + P('M82 14V2M94 14V2M82 50V62M94 50V62')),
+  v43l: () => box('0 -4 176 72', valve(40, 14, V43, ['spring', 'lever'], ['spring']) + P('M88 14V2M100 14V2M88 50V62M100 50V62')),
+  cylDA: () => box('0 0 160 70', FL.cylDA(10, 24, 110) + P('M18 48V62M112 48V62')),
+  cylSA: () => box('0 0 160 70', FL.cylSA(10, 24, 110) + P('M18 48V62')),
+  gauge: () => box('0 0 100 76', FL.gauge(50, 30) + P('M50 40V68')),
+  accum: () => box('0 0 100 76', FL.accum(50, 34) + P('M50 52V70')),
+  shuttle: () => box('0 0 100 76', FL.shuttle(50, 46) + P('M28 46H8M72 46H92M50 37V12')),
+  tee: () => box('0 0 100 76', P('M8 46H92M50 46V12') + dot(50, 46)),
+  pilot: () => box('0 0 100 76', P('M8 38H92', 'ln dash')),
+};
+
+/* ===== Schematy: drabinka PLC ===== */
+const LE = (k, x, y) => `<g transform="translate(${x} ${y})">${LS[k]()}</g>`;
+const lab2 = (x, y, name, addr) => Tx(x, y - 30, name, 'tx sm mu') + Tx(x, y - 17, addr, 'tx sm');
+const lrails = h => P(`M14 10V${h - 10}M306 10V${h - 10}`, 'ln rail');
+
+function ldSeal(q) {
+  const y = 60, y2 = 122; let s = lrails(160);
+  s += W([[14, y], [36, y]]) + LE('no', 36, y) + lab2(66, y, 'Start', '%I0.0') + W([[96, y], [130, y]]);
+  if (q === 'stop') s += P(`M130 ${y}H136M184 ${y}H190`) + QB(160, y, 48, 36) + lab2(160, y - 7, 'Stop (NC)', '%I0.1');
+  else s += LE('nc', 130, y) + lab2(160, y, 'Stop', '%I0.1');
+  s += W([[190, y], [236, y]]) + LE('coil', 236, y) + lab2(266, y, 'Silnik', '%Q0.0') + W([[296, y], [306, y]]);
+  s += dot(24, y) + dot(110, y) + W([[24, y], [24, y2], [36, y2]]);
+  if (q === 'seal') s += P(`M36 ${y2}H42M90 ${y2}H96`) + QB(66, y2, 48, 36);
+  else s += LE('no', 36, y2) + lab2(66, y2, 'Silnik', '%Q0.0');
+  s += W([[96, y2], [110, y2], [110, y]]);
+  return svgW('0 0 320 160', s, 'Drabinka: start-stop z podtrzymaniem');
+}
+function ldInter() {
+  const r1 = 60, r2 = 140; let s = lrails(180);
+  s += W([[14, r1], [36, r1]]) + LE('no', 36, r1) + lab2(66, r1, 'Prawo', '%I0.0') + W([[96, r1], [130, r1]]) + P(`M130 ${r1}H136M184 ${r1}H190`) + QB(160, r1, 48, 36);
+  s += W([[190, r1], [236, r1]]) + LE('coil', 236, r1) + lab2(266, r1, 'Silnik prawo', '%Q0.0') + W([[296, r1], [306, r1]]);
+  s += W([[14, r2], [36, r2]]) + LE('no', 36, r2) + lab2(66, r2, 'Lewo', '%I0.1') + W([[96, r2], [130, r2]]) + LE('nc', 130, r2) + lab2(160, r2, 'Silnik prawo', '%Q0.0');
+  s += W([[190, r2], [236, r2]]) + LE('coil', 236, r2) + lab2(266, r2, 'Silnik lewo', '%Q0.1') + W([[296, r2], [306, r2]]);
+  return svgW('0 0 320 172', s, 'Drabinka: blokada prawo-lewo');
+}
+function ldTon() {
+  const y = 60; let s = lrails(130);
+  s += W([[14, y], [30, y]]) + LE('no', 30, y) + lab2(60, y, 'Czujnik', '%I0.0') + W([[90, y], [120, y]]);
+  s += FB(130, y - 30, 80, '', ['IN', 'PT'], ['Q', 'ET'], { q: true }) + Tx(116, y + 26, 'T#5s', 'tx sm code', 'end');
+  s += W([[220, y], [236, y]]) + LE('coil', 236, y) + lab2(266, y, 'Lampa', '%Q0.0') + W([[296, y], [306, y]]);
+  return svgW('0 0 320 130', s, 'Drabinka: blok czasowy');
+}
+function ldCtu() {
+  const y = 60, g = 52; let s = lrails(200);
+  s += W([[14, y], [30, y]]) + LE('no', 30, y) + lab2(60, y, 'Czujnik', '%I0.1') + W([[90, y], [120, y]]);
+  s += W([[14, y + g], [30, y + g]]) + LE('no', 30, y + g) + lab2(60, y + g, 'Reset', '%I0.2') + W([[90, y + g], [120, y + g]]);
+  s += FB(130, y - 30, 80, '', ['CU', 'R', 'PV'], ['Q', 'CV'], { q: true, gap: g }) + Tx(116, y + 2 * g + 4, '10', 'tx sm code', 'end');
+  s += W([[220, y], [236, y]]) + LE('coil', 236, y) + lab2(266, y, 'Lampa', '%Q0.0') + W([[296, y], [306, y]]);
+  return svgW('0 0 320 200', s, 'Drabinka: licznik');
+}
+function ldEdge() {
+  const y = 60; let s = lrails(150);
+  s += P(`M14 ${y}H42M90 ${y}H130`) + QB(66, y, 48, 36) + lab2(66, y - 4, 'Przycisk', '%I0.0');
+  s += FB(140, y - 30, 84, 'ADD', ['EN', 'IN1', 'IN2'], ['ENO', 'OUT'], { gap: 26 });
+  s += Tx(126, y + 30, 'Licznik', 'tx sm code', 'end') + Tx(126, y + 56, '1', 'tx sm code', 'end') + Tx(240, y + 30, 'Licznik', 'tx sm code', 'start');
+  return svgW('0 0 320 150', s, 'Drabinka: dodawanie do licznika');
+}
+
+/* ===== Schematy elektryczne (IEC, pionowe ścieżki prądowe) ===== */
+const EV = (sym, x, y) => `<g transform="translate(${x} ${y}) rotate(90)">${sym}</g>`;
+function VE(x, y, key, lab, sub, side = 'l') {
+  let s = key === 'q' ? P(`M${x} ${y}V${y + 6}M${x} ${y + 54}V${y + 60}`) + QB(x, y + 30, 40, 48) : EV(ES[key](), x, y);
+  if (lab) {
+    const tx = side === 'l' ? x - 26 : x + 26, a = side === 'l' ? 'end' : 'start';
+    s += Tx(tx, y + 30, lab, 'tx', a); if (sub) s += Tx(tx, y + 44, sub, 'tx sm mu', a);
+  }
+  return s;
+}
+const erails = (y1, y2, x1, x2, l1 = 'L1', l2 = 'N') => P(`M${x1} ${y1}H${x2}M${x1} ${y2}H${x2}`, 'ln rail') + Tx(x1 - 8, y1 + 5, l1, 'tx', 'end') + Tx(x1 - 8, y2 + 5, l2, 'tx', 'end');
+
+function dol(o = {}) {
+  const x = 110, ex = o.estop ? 70 : 0, N = 380 + ex;
+  let s = erails(24, N, 40, o.lamp ? 300 : 220);
+  s += W([[x, 24], [x, 40]]) + dot(x, 24) + dot(x, N);
+  s += o.q === 'F2' ? VE(x, 40, 'q') : VE(x, 40, 'olNC', 'F2', '95–96');
+  let y = 100;
+  if (o.estop) { s += W([[x, y], [x, y + 10]]) + VE(x, y + 10, 'q'); y += 70; }
+  s += W([[x, y], [x, y + 10]]) + VE(x, y + 10, 'pbNC', 'S0', 'Stop'); y += 70;
+  const n1 = y + 10, sTop = y + 20, n2 = sTop + 72, cTop = sTop + 100;
+  s += W([[x, y], [x, sTop]]) + dot(x, n1) + VE(x, sTop, 'pbNO', 'S1', 'Start');
+  s += W([[x, sTop + 60], [x, cTop]]) + dot(x, n2);
+  s += W([[x, n1], [190, n1], [190, sTop]]) + (o.q === 'K1' ? VE(190, sTop, 'q') : VE(190, sTop, 'no', 'K1', '13–14', 'r')) + W([[190, sTop + 60], [190, n2], [x, n2]]);
+  s += VE(x, cTop, 'coil', 'K1', 'A1–A2') + W([[x, cTop + 60], [x, N]]);
+  if (o.lamp) s += dot(270, 24) + W([[270, 24], [270, 40]]) + VE(270, 40, 'q') + W([[270, 100], [270, cTop]]) + VE(270, cTop, 'lamp', 'H1', '', 'r') + W([[270, cTop + 60], [270, N]]) + dot(270, N);
+  return svgW(`0 0 320 ${N + 16}`, s, 'Schemat sterowania stycznikiem');
+}
+function rev() {
+  const A = 80, As = 130, B = 225, Bs = 275;
+  let s = P('M30 24H70', 'ln rail') + Tx(22, 29, 'L1', 'tx', 'end') + P('M30 360H300', 'ln rail') + Tx(22, 365, 'N', 'tx', 'end');
+  s += W([[40, 24], [40, 40]]) + dot(40, 24) + VE(40, 40, 'pbNC', 'S0', 'Stop', 'r') + W([[40, 100], [40, 110], [B, 110], [B, 120]]) + dot(A, 110);
+  s += W([[A, 110], [A, 120]]) + VE(A, 120, 'pbNO', 'S1', '') + dot(A, 115) + W([[A, 115], [As, 115], [As, 120]]) + VE(As, 120, 'no', 'K1', '', 'r') + W([[As, 180], [As, 190], [A, 190]]) + dot(A, 190);
+  s += W([[A, 180], [A, 200]]) + VE(A, 200, 'q') + W([[A, 260], [A, 270]]) + VE(A, 270, 'coil', 'K1', 'prawo') + W([[A, 330], [A, 360]]) + dot(A, 360);
+  s += VE(B, 120, 'pbNO', 'S2', '') + dot(B, 115) + W([[B, 115], [Bs, 115], [Bs, 120]]) + VE(Bs, 120, 'no', 'K2', '', 'r') + W([[Bs, 180], [Bs, 190], [B, 190]]) + dot(B, 190);
+  s += W([[B, 180], [B, 200]]) + VE(B, 200, 'nc', 'K1', '21–22') + W([[B, 260], [B, 270]]) + VE(B, 270, 'coil', 'K2', 'lewo') + W([[B, 330], [B, 360]]) + dot(B, 360);
+  return svgW('0 0 320 376', s, 'Schemat nawrotu silnika');
+}
+function slash(x, y) { let s = ''; for (let i = -1; i <= 1; i++) s += P(`M${x - 6} ${y + i * 5 + 3}L${x + 6} ${y + i * 5 - 3}`); return s; }
+function power() {
+  const x = 160; let s = Tx(x, 16, 'L1 L2 L3 · 3~ 400 V', 'tx');
+  s += W([[x, 24], [x, 50]]) + slash(x, 37) + VE(x, 50, 'fuse', 'F1', 'bezpieczniki');
+  s += W([[x, 110], [x, 130]]) + slash(x, 120) + VE(x, 130, 'kmain', 'K1', 'styki główne');
+  s += W([[x, 190], [x, 210]]) + slash(x, 200) + VE(x, 210, 'q');
+  s += W([[x, 270], [x, 293]]) + slash(x, 281) + Ci(x, 315, 22, 'ln bgf') + Tx(x, 316, 'M', 'tx big') + Tx(x, 330, '3~', 'tx sm');
+  return svgW('0 0 320 346', s, 'Obwód główny silnika');
+}
+function flyback() {
+  const x = 120;
+  let s = P('M70 30H260M70 300H260', 'ln rail') + Tx(62, 35, '+24 V', 'tx', 'end') + Tx(62, 305, '0 V', 'tx', 'end');
+  s += dot(x, 30) + W([[x, 30], [x, 60]]) + Re(x - 30, 60, 60, 40, 'ln bgf', 4) + Tx(x, 77, 'PLC', 'tx sm mu') + Tx(x, 93, 'Q0.0', 'tx code');
+  s += W([[x, 100], [x, 150]]) + dot(x, 125) + VE(x, 150, 'coil', 'K1', '24 V DC') + W([[x, 210], [x, 300]]) + dot(x, 235) + dot(x, 300);
+  s += W([[x, 125], [210, 125], [210, 150]]) + VE(210, 150, 'q') + W([[210, 210], [210, 235], [x, 235]]);
+  return svgW('0 0 320 320', s, 'Cewka przekaźnika na wyjściu PLC');
+}
+
+/* ===== Schematy hydrauliczne / pneumatyczne ===== */
+function hpu(o = {}) {
+  let s = '';
+  // przewody
+  s += W([[110, 120], [110, 96], [68, 96], [68, 64]]) + W([[122, 120], [122, 84], [192, 84], [192, 64]]);
+  s += W([[110, 156], [110, 286]]) + W([[110, 314], [110, 342]]);
+  s += dot(110, 236) + W([[110, 236], [200, 236], [200, 256]]) + W([[200, 284], [200, 312]]);
+  if (o.tq) s += W([[122, 156], [122, 172], [280, 172], [280, 196]]) + W([[280, 240], [280, 262]]);
+  else s += W([[122, 156], [122, 172], [250, 172], [250, 190]]);
+  if (o.gauge !== false) s += dot(110, 206) + W([[110, 206], [75, 206], [75, 198]]);
+  // elementy
+  s += FL.cylDA(60, 40, 140);
+  s += valve(62, 120, V43, ['spring', 'sol'], ['spring', 'sol']) + Tx(38, 114, 'Y1', 'tx sm') + Tx(194, 114, 'Y2', 'tx sm');
+  s += Tx(104, 110, 'A', 'tx sm mu', 'end') + Tx(128, 110, 'B', 'tx sm mu', 'start') + Tx(104, 184, 'P', 'tx sm mu', 'end') + Tx(232, 167, 'T', 'tx sm mu');
+  s += FL.pump(110, 300) + FL.emotor(60, 300) + FL.shaft(74, 96, 300) + FL.tank(110, 336);
+  s += o.rq ? QB(200, 270, 40, 40) : FL.relief(200, 270) + Tx(222, 300, o.rl || '160 bar', 'tx sm', 'start');
+  s += FL.tank(200, 306);
+  s += o.tq ? QB(280, 218) + FL.tank(280, 256) : FL.tank(250, 184);
+  if (o.gauge !== false) s += FL.gauge(75, 188);
+  return svgW('0 0 320 360', s, 'Zasilacz hydrauliczny z siłownikiem');
+}
+function twoCyl() {
+  let s = '';
+  s += W([[40, 336], [40, 166]]) + W([[40, 364], [40, 377]]);
+  s += dot(40, 300) + W([[40, 300], [150, 300], [150, 316]]) + W([[150, 344], [150, 376]]);
+  s += dot(40, 250) + W([[40, 250], [200, 250], [200, 237]]) + W([[200, 193], [200, 166]]);
+  s += W([[52, 166], [52, 178], [76, 178], [76, 194]]) + W([[212, 166], [212, 178], [240, 178], [240, 194]]);
+  s += W([[40, 130], [40, 100], [28, 100], [28, 74]]) + W([[52, 130], [52, 110], [102, 110], [102, 74]]);
+  s += W([[200, 130], [200, 100], [186, 100], [186, 74]]) + W([[212, 130], [212, 110], [260, 110], [260, 74]]);
+  s += FL.pump(40, 350) + FL.shaft(54, 76, 350) + FL.emotor(90, 350) + FL.tank(40, 372);
+  s += FL.relief(150, 330) + FL.tank(150, 370) + Tx(172, 362, '120 bar', 'tx sm', 'start');
+  s += QB(200, 215);
+  s += valve(28, 130, V42L, ['spring'], ['sol']) + Tx(106, 124, 'Y1', 'tx sm');
+  s += valve(188, 130, V42L, ['spring'], ['sol']) + Tx(266, 124, 'Y2', 'tx sm');
+  s += FL.tank(76, 188) + FL.tank(240, 188);
+  s += FL.cylDA(20, 50, 90) + FL.cylDA(178, 50, 90);
+  s += Tx(65, 40, 'Siłownik 1 – prasa', 'tx sm') + Tx(223, 40, 'Siłownik 2 – docisk', 'tx sm');
+  return svgW('0 0 320 392', s, 'Dwa siłowniki z jednej pompy');
+}
+function intens() {
+  let s = '';
+  s += W([[62, 94], [62, 200]]) + dot(62, 130) + W([[62, 130], [30, 130], [30, 122]]);
+  s += W([[208, 94], [208, 136]]) + W([[208, 164], [208, 200]]) + dot(208, 112) + W([[208, 112], [250, 112], [250, 106]]);
+  s += Re(50, 60, 170, 34, 'ln bgf') + Re(110, 73, 150, 8, 'ln bgf') + P('M110 60V94', 'ln thick');
+  s += Tx(80, 52, 'A₁', 'tx') + Tx(165, 52, 'A₂ (pierścień)', 'tx sm');
+  s += Ar(232, 40, 282, 40, 6) + Tx(257, 32, 'wysuw', 'tx sm mu');
+  s += FL.gauge(30, 112) + Tx(16, 100, 'p₁', 'tx', 'end') + FL.gauge(250, 96) + Tx(266, 100, 'p₂ = ?', 'tx', 'start');
+  s += FL.throttle(208, 150) + Tx(226, 154, 'dławik', 'tx sm mu', 'start');
+  s += Tx(62, 218, 'z rozdzielacza', 'tx sm mu') + Tx(62, 232, 'p₁ = 160 bar', 'tx sm') + Tx(208, 218, 'do zbiornika', 'tx sm mu') + Tx(208, 232, '(T)', 'tx sm mu');
+  return svgW('0 0 320 244', s, 'Siłownik z dławieniem na wylocie');
+}
+function compUnit(x, y, lx) { return FL.pump(x, y, false) + FL.shaft(x + 14, x + 36, y) + FL.emotor(x + 50, y) + Tx(lx ?? x + 72, y + 4, 'sprężone powietrze', 'tx sm mu', 'start'); }
+function pnSA() {
+  let s = W([[68, 64], [68, 96], [90, 96], [90, 122]]) + W([[90, 178], [90, 230]]);
+  s += FL.cylSA(60, 40, 150) + QB(90, 150, 110, 56) + compUnit(90, 244);
+  return svgW('0 0 320 270', s, 'Siłownik jednostronnego działania');
+}
+function pnDA() {
+  let s = W([[68, 64], [68, 110], [115, 110], [115, 132]]) + W([[202, 64], [202, 110], [155, 110], [155, 132]]) + W([[135, 188], [135, 240]]);
+  s += FL.cylDA(60, 40, 150) + QB(135, 160, 130, 56) + compUnit(135, 254, 206);
+  return svgW('0 0 320 280', s, 'Siłownik dwustronnego działania');
+}
+function pnMeter() {
+  let s = W([[128, 190], [128, 150], [68, 150], [68, 64]]) + W([[140, 190], [140, 166], [240, 166], [240, 148]]) + W([[240, 92], [240, 86], [202, 86], [202, 64]]) + W([[134, 226], [134, 262]]);
+  s += FL.cylDA(60, 40, 150) + QB(240, 120, 50, 56);
+  s += valve(80, 190, V52, ['sol'], ['spring']) + Tx(74, 184, 'Y1', 'tx sm') + exh(125, 226) + exh(143, 226);
+  s += compUnit(134, 276, 204);
+  return svgW('0 0 320 300', s, 'Siłownik z rozdzielaczem 5/2');
+}
+function pnOr() {
+  let s = W([[68, 260], [68, 190], [128, 190]]) + W([[238, 260], [238, 190], [192, 190]]) + W([[160, 170], [160, 74]]);
+  s += W([[68, 296], [68, 320], [238, 320], [238, 296]]) + dot(160, 320) + W([[160, 320], [160, 328]]);
+  s += FL.cylSA(152, 50, 120) + QB(160, 190, 64, 40);
+  s += valve(20, 260, V32, ['push'], ['spring']) + exh(80, 296) + Tx(12, 252, 'S1', 'tx sm', 'start');
+  s += valve(190, 260, V32, ['push'], ['spring']) + exh(250, 296) + Tx(182, 252, 'S2', 'tx sm', 'start');
+  s += FL.pump(160, 342, false) + FL.shaft(174, 196, 342) + FL.emotor(210, 342);
+  return svgW('0 0 320 362', s, 'Sterowanie z dwóch miejsc');
+}
+
+/* ===== Atlas symboli ===== */
+const SYM_CATS = { E: 'Elektryczne', F: 'Pneumatyka i hydraulika', P: 'Drabinka PLC' };
+const SYMBOLS = [
+  // Elektryczne (IEC 60617)
+  { id: 'e-no', cat: 'E', pl: 'Styk zwierny (NO)', en: 'Normally open contact', svg: () => hsym(ES.no()), note: 'Zamyka się po zadziałaniu. Zaciski styków pomocniczych NO kończą się cyframi 3–4 (np. 13–14).' },
+  { id: 'e-nc', cat: 'E', pl: 'Styk rozwierny (NC)', en: 'Normally closed contact', svg: () => hsym(ES.nc()), note: 'Otwiera się po zadziałaniu. Zaciski NC kończą się cyframi 1–2 (np. 21–22).' },
+  { id: 'e-pbno', cat: 'E', pl: 'Przycisk zwierny (Start)', en: 'Push button, NO', svg: () => hsym(ES.pbNO()), note: 'Linia przerywana to napęd mechaniczny, nawias to naciskanie ręką.' },
+  { id: 'e-pbnc', cat: 'E', pl: 'Przycisk rozwierny (Stop)', en: 'Push button, NC', svg: () => hsym(ES.pbNC()), note: 'Stop zawsze NC: przerwany przewód też zatrzyma maszynę.' },
+  { id: 'e-estop', cat: 'E', pl: 'Wyłącznik awaryjny (grzybkowy)', en: 'Emergency stop', svg: () => hsym(ES.estop()), note: 'Styki NC, grzybek z ryglowaniem po wciśnięciu.' },
+  { id: 'e-coil', cat: 'E', pl: 'Cewka stycznika / przekaźnika', en: 'Contactor / relay coil', svg: () => hsym(ES.coil()), note: 'Zaciski A1–A2. Oznaczenie K.' },
+  { id: 'e-kmain', cat: 'E', pl: 'Zestyk główny stycznika', en: 'Contactor main contact', svg: () => hsym(ES.kmain()), note: 'Półkole przy styku oznacza funkcję stycznika. Zaciski 1–2, 3–4, 5–6.' },
+  { id: 'e-fuse', cat: 'E', pl: 'Bezpiecznik topikowy', en: 'Fuse', svg: () => hsym(ES.fuse()), note: 'Chroni przed zwarciem. Oznaczenie F.' },
+  { id: 'e-cb', cat: 'E', pl: 'Wyłącznik nadprądowy', en: 'Circuit breaker', svg: () => hsym(ES.cb()), note: 'Krzyżyk przy styku oznacza funkcję wyłącznika (rozłącza prąd zwarciowy).' },
+  { id: 'e-therm', cat: 'E', pl: 'Przekaźnik termiczny (człon grzejny)', en: 'Thermal overload relay', svg: () => hsym(ES.therm()), note: 'Montowany w obwodzie głównym silnika.' },
+  { id: 'e-olnc', cat: 'E', pl: 'Styk NC przekaźnika termicznego', en: 'Overload relay contact', svg: () => hsym(ES.olNC()), note: 'Zaciski 95–96, w obwodzie sterowania. 97–98 to styk NO do sygnalizacji.' },
+  { id: 'e-lamp', cat: 'E', pl: 'Lampka sygnalizacyjna', en: 'Indicator lamp', svg: () => hsym(ES.lamp()), note: 'Oznaczenie H.' },
+  { id: 'e-motor', cat: 'E', pl: 'Silnik trójfazowy', en: 'Three-phase motor', svg: () => hsym(ES.motor()), note: 'Oznaczenie M.' },
+  { id: 'e-res', cat: 'E', pl: 'Rezystor', en: 'Resistor', svg: () => hsym(ES.res()), note: 'IEC: prostokąt. Zygzak to rysunek amerykański (ANSI).' },
+  { id: 'e-cap', cat: 'E', pl: 'Kondensator', en: 'Capacitor', svg: () => hsym(ES.cap()), note: '' },
+  { id: 'e-diode', cat: 'E', pl: 'Dioda', en: 'Diode', svg: () => hsym(ES.diode()), note: 'Przewodzi w kierunku trójkąta. Kreska to katoda.' },
+  { id: 'e-led', cat: 'E', pl: 'Dioda LED', en: 'Light-emitting diode', svg: () => hsym(ES.led()), note: 'Strzałki na zewnątrz: element emituje światło.' },
+  { id: 'e-ind', cat: 'E', pl: 'Cewka indukcyjna (dławik)', en: 'Inductor', svg: () => hsym(ES.ind()), note: '' },
+  { id: 'e-bat', cat: 'E', pl: 'Ogniwo / bateria', en: 'Cell / battery', svg: () => hsym(ES.bat()), note: 'Dłuższa kreska to biegun dodatni.' },
+  { id: 'e-trafo', cat: 'E', pl: 'Transformator', en: 'Transformer', svg: () => hsym(ES.trafo()), note: 'Oznaczenie T.' },
+  { id: 'e-earth', cat: 'E', pl: 'Uziemienie', en: 'Earth (ground)', svg: () => vsym(ES.earth()), note: '' },
+  { id: 'e-pe', cat: 'E', pl: 'Uziemienie ochronne (PE)', en: 'Protective earth', svg: () => vsym(ES.pe()), note: 'Przewód PE: żółto-zielony.' },
+  { id: 'e-amm', cat: 'E', pl: 'Amperomierz', en: 'Ammeter', svg: () => hsym(ES.amm()), note: 'Włączany szeregowo z odbiornikiem.' },
+  { id: 'e-volt', cat: 'E', pl: 'Woltomierz', en: 'Voltmeter', svg: () => hsym(ES.volt()), note: 'Włączany równolegle.' },
+  // Pneumatyka i hydraulika (ISO 1219)
+  { id: 'f-pump', cat: 'F', pl: 'Pompa hydrauliczna (stała wydajność)', en: 'Fixed displacement pump', svg: FSYM.pump, note: 'Trójkąt pełny = hydraulika. Skierowany na zewnątrz = pompa.' },
+  { id: 'f-comp', cat: 'F', pl: 'Sprężarka', en: 'Compressor', svg: FSYM.comp, note: 'Trójkąt pusty = pneumatyka.' },
+  { id: 'f-hmot', cat: 'F', pl: 'Silnik hydrauliczny', en: 'Hydraulic motor', svg: FSYM.hmot, note: 'Trójkąt skierowany do środka = olej napędza element.' },
+  { id: 'f-emot', cat: 'F', pl: 'Silnik elektryczny (napęd pompy)', en: 'Electric motor', svg: FSYM.emot, note: 'Podwójna linia = połączenie mechaniczne (wał).' },
+  { id: 'f-tank', cat: 'F', pl: 'Zbiornik', en: 'Tank (reservoir)', svg: FSYM.tank, note: 'Na schemacie może występować wiele razy – to wciąż jeden zbiornik.' },
+  { id: 'f-filter', cat: 'F', pl: 'Filtr', en: 'Filter', svg: FSYM.filter, note: 'Linia przerywana to wkład filtrujący.' },
+  { id: 'f-check', cat: 'F', pl: 'Zawór zwrotny', en: 'Check valve', svg: FSYM.check, note: 'Przepływ swobodny od wierzchołka „V” w stronę kulki (tu: w górę).' },
+  { id: 'f-relief', cat: 'F', pl: 'Zawór przelewowy (bezpieczeństwa)', en: 'Pressure relief valve', svg: FSYM.relief, note: 'Normalnie zamknięty, sterowany ciśnieniem z wejścia, odprowadza do zbiornika.' },
+  { id: 'f-reduce', cat: 'F', pl: 'Zawór redukcyjny', en: 'Pressure reducing valve', svg: FSYM.reducing, note: 'Normalnie otwarty, sterowany ciśnieniem z wyjścia.' },
+  { id: 'f-throttle', cat: 'F', pl: 'Zawór dławiący nastawny', en: 'Adjustable throttle valve', svg: FSYM.throttle, note: 'Ukośna strzałka = nastawa. Reguluje prędkość, nie ciśnienie.' },
+  { id: 'f-oneway', cat: 'F', pl: 'Zawór dławiąco-zwrotny', en: 'One-way flow control valve', svg: () => FSYM.oneway(true), note: 'Dławi w jedną stronę, w drugą przepuszcza swobodnie przez zwrotny.' },
+  { id: 'f-32', cat: 'F', pl: 'Rozdzielacz 3/2 NC (przycisk, sprężyna)', en: '3/2-way valve, normally closed', svg: FSYM.v32, note: '3 przyłącza, 2 położenia. Przyłącza rysuje się przy kwadracie położenia spoczynkowego (przy sprężynie).' },
+  { id: 'f-42', cat: 'F', pl: 'Rozdzielacz 4/2 (elektromagnes, sprężyna)', en: '4/2-way solenoid valve', svg: FSYM.v42, note: 'Przyłącza P, T, A, B.' },
+  { id: 'f-52', cat: 'F', pl: 'Rozdzielacz 5/2 (elektromagnes, sprężyna)', en: '5/2-way solenoid valve', svg: FSYM.v52, note: 'Pneumatyka: 1 zasilanie, 2 i 4 wyjścia, 3 i 5 odpowietrzenia.' },
+  { id: 'f-43', cat: 'F', pl: 'Rozdzielacz 4/3, środek zamknięty', en: '4/3-way valve, closed centre', svg: FSYM.v43, note: 'Sprężyny centrują suwak, gdy oba elektromagnesy są wyłączone.' },
+  { id: 'f-cylda', cat: 'F', pl: 'Siłownik dwustronnego działania', en: 'Double-acting cylinder', svg: FSYM.cylDA, note: 'Ciśnienie wysuwa i cofa tłok.' },
+  { id: 'f-cylsa', cat: 'F', pl: 'Siłownik jednostronnego działania (powrót sprężyną)', en: 'Single-acting cylinder, spring return', svg: FSYM.cylSA, note: '' },
+  { id: 'f-gauge', cat: 'F', pl: 'Manometr', en: 'Pressure gauge', svg: FSYM.gauge, note: '' },
+  { id: 'f-accu', cat: 'F', pl: 'Akumulator hydrauliczny', en: 'Hydraulic accumulator', svg: FSYM.accum, note: 'Magazynuje olej pod ciśnieniem (zwykle z poduszką azotu).' },
+  { id: 'f-shuttle', cat: 'F', pl: 'Zawór przełączający (LUB)', en: 'Shuttle valve (OR)', svg: FSYM.shuttle, note: 'Wyjście dostaje ciśnienie z dowolnego wejścia.' },
+  { id: 'f-pilot', cat: 'F', pl: 'Linia sterująca (pilotowa)', en: 'Pilot (control) line', svg: FSYM.pilot, note: 'Linia ciągła to przewód roboczy, przerywana – sterowanie.' },
+  // Drabinka PLC (IEC 61131-3)
+  { id: 'p-no', cat: 'P', pl: 'Styk NO', en: 'Normally open contact', svg: () => hsym(LS.no()), note: 'Przewodzi, gdy zmienna = TRUE (1).' },
+  { id: 'p-nc', cat: 'P', pl: 'Styk NC', en: 'Normally closed contact', svg: () => hsym(LS.nc()), note: 'Przewodzi, gdy zmienna = FALSE (0).' },
+  { id: 'p-p', cat: 'P', pl: 'Styk zbocza narastającego (P)', en: 'Positive transition contact', svg: () => hsym(LS.p()), note: 'Daje 1 tylko przez jeden cykl po zmianie 0 → 1.' },
+  { id: 'p-n', cat: 'P', pl: 'Styk zbocza opadającego (N)', en: 'Negative transition contact', svg: () => hsym(LS.n()), note: 'Daje 1 przez jeden cykl po zmianie 1 → 0.' },
+  { id: 'p-coil', cat: 'P', pl: 'Cewka', en: 'Coil', svg: () => hsym(LS.coil()), note: 'Zmienna przyjmuje stan szczebla.' },
+  { id: 'p-ncoil', cat: 'P', pl: 'Cewka zanegowana', en: 'Negated coil', svg: () => hsym(LS.ncoil()), note: 'Zapisuje odwrotność stanu szczebla.' },
+  { id: 'p-set', cat: 'P', pl: 'Cewka SET', en: 'Set (latch) coil', svg: () => hsym(LS.set()), note: 'Ustawia 1 i trzyma do cewki RESET.' },
+  { id: 'p-reset', cat: 'P', pl: 'Cewka RESET', en: 'Reset (unlatch) coil', svg: () => hsym(LS.reset()), note: 'Zeruje zmienną ustawioną przez SET.' },
+  { id: 'p-ton', cat: 'P', pl: 'Timer TON', en: 'On-delay timer', svg: () => box('0 0 110 86', FB(25, 6, 60, 'TON', ['IN', 'PT'], ['Q', 'ET'])), note: 'Q = 1 po czasie PT ciągłego sygnału na IN.' },
+  { id: 'p-ctu', cat: 'P', pl: 'Licznik CTU', en: 'Up counter', svg: () => box('0 0 110 104', FB(25, 4, 60, 'CTU', ['CU', 'R', 'PV'], ['Q', 'CV'])), note: 'Liczy zbocza na CU. Q = 1, gdy CV ≥ PV.' },
+];
+
+/* ===== Uzupełnij schemat ===== */
+const SCH_CATS = { plc: 'PLC', el: 'Elektryka', fl: 'Pneumatyka i hydraulika' };
+const opt = (svg, tag, name) => ({ svg, tag, name });
+const L_ = k => hsym(LS[k]());
+const E_ = k => vsym(ES[k]());
+const SCHEMATICS = [
+  { id: 's-plc-seal', cat: 'plc', title: 'Podtrzymanie',
+    prompt: 'Silnik ma pracować dalej po puszczeniu przycisku Start. Start i Stop to przyciski zwierne (NO). Co wstawić w miejsce „?”',
+    fig: () => ldSeal('seal'),
+    options: [opt(L_('no'), '%Q0.0', 'Styk NO wyjścia Silnik'), opt(L_('nc'), '%Q0.0', 'Styk NC wyjścia Silnik'), opt(L_('no'), '%I0.1', 'Styk NO przycisku Stop'), opt(L_('coil'), '%Q0.0', 'Cewka Silnik')],
+    answer: 0,
+    explain: 'Styk NO własnego wyjścia %Q0.0 równolegle do Start to <b>podtrzymanie</b> (seal-in). Po puszczeniu Start szczebel przewodzi gałęzią przez zamknięty styk %Q0.0. Stop przerywa szczebel, cewka gaśnie i podtrzymanie odpada.' },
+  { id: 's-plc-stopnc', cat: 'plc', title: 'Stop rozwierny',
+    prompt: 'Przycisk Stop jest fizycznie <b>rozwierny (NC)</b> i podłączony do %I0.1. Jaki styk wstawić w programie?',
+    fig: () => ldSeal('stop'),
+    options: [opt(L_('no'), '%I0.1', 'Styk NO %I0.1'), opt(L_('nc'), '%I0.1', 'Styk NC %I0.1'), opt(L_('p'), '%I0.1', 'Zbocze narastające %I0.1'), opt(L_('nc'), '%Q0.0', 'Styk NC %Q0.0')],
+    answer: 0,
+    explain: 'Nienaciśnięty przycisk NC podaje 24 V, więc %I0.1 = 1. Styk NO w programie przewodzi, gdy zmienna = 1, czyli silnik może pracować, dopóki nikt nie wciśnie Stop. Wciśnięcie albo zerwany przewód daje 0 i szczebel się przerywa. Styk NC odwróciłby logikę i silnik nigdy by nie ruszył. Ta sama zasada (fail-safe) dotyczy krańcówek bezpieczeństwa.' },
+  { id: 's-plc-inter', cat: 'plc', title: 'Blokada prawo–lewo',
+    prompt: 'Silnik nie może dostać jednocześnie sygnału „prawo” i „lewo”. Co wstawić w szczebel „prawo”?',
+    fig: () => ldInter(),
+    options: [opt(L_('nc'), '%Q0.1', 'Styk NC wyjścia Silnik lewo'), opt(L_('no'), '%Q0.1', 'Styk NO wyjścia Silnik lewo'), opt(L_('nc'), '%Q0.0', 'Styk NC wyjścia Silnik prawo'), opt(L_('no'), '%I0.1', 'Styk NO przycisku Lewo')],
+    answer: 0,
+    explain: 'Styk NC wyjścia „lewo” w szczeblu „prawo” (i odwrotnie) to <b>blokada wzajemna</b>. Gdy pracuje jeden kierunek, drugi nie może się załączyć. W szafie robi się dodatkowo blokadę sprzętową stykami 21–22 styczników, bo program nie pomoże przy sklejonym styku.' },
+  { id: 's-plc-ton', cat: 'plc', title: 'Opóźnienie załączenia',
+    prompt: 'Lampa ma się zapalić, gdy czujnik jest aktywny <b>bez przerwy przez 5 s</b>. Jaki blok wstawić?',
+    fig: () => ldTon(),
+    options: [{ code: 'TON' }, { code: 'TOF' }, { code: 'TP' }, { code: 'CTU' }],
+    answer: 0,
+    explain: '<b>TON</b> – opóźnienie załączenia: Q = 1 dopiero, gdy IN trwa bez przerwy przez PT. Zanik IN zeruje odliczanie. <b>TOF</b> – opóźnienie wyłączenia: Q trzyma 1 jeszcze przez PT po zaniku IN. <b>TP</b> – impuls o stałej długości. <b>CTU</b> liczy zbocza, nie czas.' },
+  { id: 's-plc-ctu', cat: 'plc', title: 'Licznik detali',
+    prompt: 'Po 10 detalach na taśmie ma się zapalić lampa. Przycisk Reset zeruje stan. Jaki blok wstawić?',
+    fig: () => ldCtu(),
+    options: [{ code: 'CTU' }, { code: 'CTD' }, { code: 'TON' }, { code: 'R_TRIG' }],
+    answer: 0,
+    explain: '<b>CTU</b> (licznik w górę) dodaje 1 przy każdym zboczu narastającym na CU. Gdy CV ≥ PV (10), Q = 1. Wejście R zeruje CV. <b>CTD</b> liczy w dół od PV i ma wejście LD zamiast R.' },
+  { id: 's-plc-edge', cat: 'plc', title: 'Jedno naciśnięcie = +1',
+    prompt: 'Każde naciśnięcie przycisku ma zwiększyć Licznik dokładnie o 1. Jaki styk wstawić przed blokiem ADD?',
+    fig: () => ldEdge(),
+    options: [opt(L_('p'), '%I0.0', 'Styk zbocza narastającego (P)'), opt(L_('no'), '%I0.0', 'Zwykły styk NO'), opt(L_('nc'), '%I0.0', 'Styk NC'), opt(L_('set'), '%I0.0', 'Cewka SET')],
+    answer: 0,
+    explain: 'Cykl sterownika trwa kilka ms, a naciśnięcie przycisku ok. 0,2 s. Zwykły styk NO byłby prawdziwy przez dziesiątki cykli i Licznik urósłby o kilkadziesiąt. Styk <b>P</b> (zbocze narastające, w ST: R_TRIG) daje 1 tylko w jednym cyklu po zmianie 0 → 1. Zbocze N też dodałoby 1, ale dopiero po puszczeniu.' },
+  { id: 's-st-seal', cat: 'plc', title: 'ST: podtrzymanie',
+    prompt: 'Tekst strukturalny (ST). Start i Stop = TRUE, gdy przycisk jest wciśnięty. Uzupełnij podtrzymanie:',
+    code: 'Motor := (Start OR ____) AND NOT Stop;',
+    options: [{ code: 'Motor' }, { code: 'Start' }, { code: 'NOT Motor' }, { code: 'Stop' }],
+    answer: 0,
+    explain: 'To podtrzymanie w jednej linii: gdy Motor raz stanie się TRUE, w kolejnym cyklu „Start OR Motor” nadal jest prawdą. „AND NOT Stop” przerywa podtrzymanie.' },
+  { id: 's-st-ton', cat: 'plc', title: 'ST: czas w TON',
+    prompt: 'CODESYS, ST. Co wpisać jako czas PT, żeby opóźnienie wynosiło 5 sekund?',
+    code: 'VAR\n    tDelay : TON;\nEND_VAR\n\ntDelay(IN := Sensor, PT := ____);\nLamp := tDelay.Q;',
+    options: [{ code: 'T#5S' }, { code: '5' }, { code: "'5s'" }, { code: '5000' }],
+    answer: 0,
+    explain: 'Stała czasu w IEC 61131-3 ma postać <code>T#5S</code> (albo TIME#5s, T#500ms, T#1m30s). Liczby 5 i 5000 są typu całkowitego, a nie TIME, więc kompilator zgłosi błąd typu. Tekst w apostrofach to STRING.' },
+  { id: 's-st-rtrig', cat: 'plc', title: 'ST: R_TRIG',
+    prompt: 'Które wyjście bloku R_TRIG daje impuls na jeden cykl?',
+    code: 'VAR\n    rtStart : R_TRIG;\nEND_VAR\n\nrtStart(CLK := Button);\nIF rtStart.____ THEN\n    Count := Count + 1;\nEND_IF;',
+    options: [{ code: 'Q' }, { code: 'CLK' }, { code: 'ET' }, { code: 'OUT' }],
+    answer: 0,
+    explain: 'R_TRIG ma wejście CLK i wyjście <b>Q</b>. Q = TRUE tylko przez jeden cykl, gdy CLK zmieni się z FALSE na TRUE. ET (czas, który upłynął) ma timer, a nie R_TRIG.' },
+
+  { id: 's-el-seal', cat: 'el', title: 'Podtrzymanie stycznika',
+    prompt: 'Rozruch bezpośredni silnika. Po puszczeniu S1 (Start) stycznik K1 ma pozostać załączony. Co wstawić w miejsce „?”',
+    fig: () => dol({ q: 'K1' }),
+    options: [opt(E_('no'), 'K1 13–14', 'Styk zwierny (NO) stycznika K1'), opt(E_('nc'), 'K1 21–22', 'Styk rozwierny (NC) stycznika K1'), opt(E_('pbNC'), 'S2', 'Przycisk rozwierny'), opt(E_('lamp'), 'H1', 'Lampka')],
+    answer: 0,
+    explain: 'Styk pomocniczy NO stycznika (13–14) równolegle do Start to <b>podtrzymanie</b>. Po załączeniu K1 jego styk 13–14 zwiera się i przejmuje rolę przycisku. Wyłączenie: S0 (Stop) albo zadziałanie przekaźnika termicznego F2 (95–96).' },
+  { id: 's-el-ol', cat: 'el', title: 'Ochrona przed przeciążeniem',
+    prompt: 'Brakuje elementu, który wyłączy stycznik, gdy silnik będzie przeciążony (za duży prąd przez dłuższy czas).',
+    fig: () => dol({ q: 'F2' }),
+    options: [opt(E_('olNC'), 'F2 95–96', 'Styk NC przekaźnika termicznego'), opt(E_('fuse'), 'F3', 'Bezpiecznik topikowy'), opt(E_('pbNO'), 'S2', 'Przycisk zwierny'), opt(E_('no'), 'K1 43–44', 'Styk NO stycznika')],
+    answer: 0,
+    explain: 'Przekaźnik termiczny F2 mierzy prąd w obwodzie głównym silnika, a jego styk NC <b>95–96</b> jest w obwodzie sterowania. Przy przeciążeniu styk się otwiera i K1 odpada. Bezpiecznik chroni przed zwarciem, a nie przed długotrwałym przeciążeniem.' },
+  { id: 's-el-rev', cat: 'el', title: 'Nawrót: blokada',
+    prompt: 'Nawrót silnika: K1 = prawo, K2 = lewo. Oba styczniki nie mogą być załączone jednocześnie. Co wstawić w obwód cewki K1?',
+    fig: () => rev(),
+    options: [opt(E_('nc'), 'K2 21–22', 'Styk NC stycznika K2'), opt(E_('no'), 'K2 13–14', 'Styk NO stycznika K2'), opt(E_('nc'), 'K1 21–22', 'Własny styk NC stycznika K1'), opt(E_('pbNO'), 'S2', 'Przycisk Lewo')],
+    answer: 0,
+    explain: 'Styk NC K2 w obwodzie cewki K1 (i NC K1 w obwodzie K2) to <b>blokada elektryczna</b>. Gdy K2 pracuje, jego styk 21–22 jest otwarty i K1 nie załączy się. Oba styczniki naraz zamieniłyby dwie fazy na zwarcie.' },
+  { id: 's-el-lamp', cat: 'el', title: 'Lampka „praca”',
+    prompt: 'Lampka H1 ma świecić, gdy silnik pracuje (K1 załączony). Jaki styk wstawić?',
+    fig: () => dol({ lamp: true }),
+    options: [opt(E_('no'), 'K1 43–44', 'Styk NO stycznika K1'), opt(E_('nc'), 'K1 21–22', 'Styk NC stycznika K1'), opt(E_('pbNC'), 'S0', 'Przycisk Stop'), opt(E_('olNC'), 'F2 95–96', 'Styk NC przekaźnika termicznego')],
+    answer: 0,
+    explain: 'Lampka pracy dostaje napięcie przez styk pomocniczy NO stycznika. Styk NC K1 dałby lampkę „postój”. Styk F2 95–96 jest zamknięty w normalnej pracy, więc lampka świeciłaby cały czas. Lampkę „przeciążenie” podłącza się przez styk NO 97–98 przekaźnika termicznego.' },
+  { id: 's-el-power', cat: 'el', title: 'Obwód główny silnika',
+    prompt: 'Obwód główny silnika 3~ (rysunek jednokreskowy, kreski /// = 3 fazy). Co wstawić między stycznik a silnik?',
+    fig: () => power(),
+    options: [opt(E_('therm'), 'F2', 'Przekaźnik termiczny (człon grzejny)'), opt(E_('coil'), 'A1–A2', 'Cewka stycznika'), opt(E_('lamp'), 'H1', 'Lampka'), opt(E_('cap'), 'C1', 'Kondensator')],
+    answer: 0,
+    explain: 'Klasyczny układ: bezpieczniki F1 (zwarcie) → stycznik K1 (łączenie) → przekaźnik termiczny F2 (przeciążenie) → silnik. Prąd silnika płynie przez człony grzejne F2, a jego styk 95–96 jest w obwodzie sterowania. Często zamiast F1 + F2 stosuje się jeden wyłącznik silnikowy z nastawą prądu.' },
+  { id: 's-el-estop', cat: 'el', title: 'Wyłącznik awaryjny',
+    prompt: 'Maszyna potrzebuje wyłącznika awaryjnego, który przerwie obwód cewki K1 i zostanie zaryglowany po wciśnięciu. Co wstawić?',
+    fig: () => dol({ estop: true }),
+    options: [opt(E_('estop'), '', 'Przycisk grzybkowy NC (E-stop)'), opt(E_('pbNO'), '', 'Przycisk zwierny'), opt(E_('no'), '', 'Styk NO stycznika'), opt(E_('lamp'), '', 'Lampka')],
+    answer: 0,
+    explain: 'Wyłącznik awaryjny ma <b>styki rozwierne</b> w szeregu z obwodem i grzybek z ryglowaniem: zostaje wciśnięty, dopóki się go nie odblokuje. Zerwany przewód też zatrzyma maszynę. W nowych maszynach E-stop zwykle idzie przez przekaźnik bezpieczeństwa.' },
+  { id: 's-el-diode', cat: 'el', title: 'Dioda gasząca',
+    prompt: 'Cewka przekaźnika K1 (24 V DC) jest załączana tranzystorowym wyjściem PLC. Co dodać równolegle do cewki, żeby chronić wyjście przy wyłączaniu?',
+    fig: () => flyback(),
+    options: [opt(vsym(ES.diode(), 'up'), 'katoda do +24 V', 'Dioda zaporowo (katoda do +)'), opt(vsym(ES.diode(), 'down'), 'katoda do 0 V', 'Dioda w kierunku przewodzenia'), opt(E_('cap'), '', 'Kondensator'), opt(E_('fuse'), '', 'Bezpiecznik')],
+    answer: 0,
+    explain: 'Przy wyłączaniu cewka indukuje przepięcie o odwrotnej polaryzacji (nawet setki woltów). <b>Dioda gasząca</b> wpięta zaporowo, katodą do „+”, nie przewodzi w normalnej pracy, a przy wyłączeniu zamyka obwód dla prądu cewki i chroni tranzystor. Wpięta odwrotnie zwarłaby wyjście przy każdym załączeniu. W obwodach AC stosuje się warystor albo układ RC.' },
+
+  { id: 's-fl-relief', cat: 'fl', title: 'Ochrona pompy',
+    prompt: 'Pompa zębata (stała wydajność) tłoczy olej cały czas. Gdy siłownik dojedzie do końca, ciśnienie rosłoby bez ograniczenia. Co musi być w gałęzi „?” do zbiornika?',
+    fig: () => hpu({ rq: true }),
+    options: [opt(FSYM.relief(), '', 'Zawór przelewowy (bezpieczeństwa)'), opt(FSYM.reducing(), '', 'Zawór redukcyjny'), opt(FSYM.check(), '', 'Zawór zwrotny'), opt(FSYM.throttle(), '', 'Zawór dławiący')],
+    answer: 0,
+    explain: 'Zawór <b>przelewowy</b> jest normalnie zamknięty. Gdy ciśnienie na wejściu pokona siłę sprężyny, otwiera się i nadmiar oleju wraca do zbiornika. To on ustala maksymalne ciśnienie w układzie z pompą stałej wydajności. Linia przerywana to sterowanie ciśnieniem z wejścia.' },
+  { id: 's-fl-sa', cat: 'fl', title: 'Siłownik jednostronny',
+    prompt: 'Siłownik jednostronnego działania ma się wysuwać, gdy trzymasz przycisk, i wracać sprężyną po puszczeniu. Jaki zawór wstawić?',
+    fig: () => pnSA(),
+    options: [opt(FSYM.v32(), '', 'Rozdzielacz 3/2 NC'), opt(FSYM.v22(), '', 'Rozdzielacz 2/2 NC'), opt(FSYM.v43l(), '', 'Rozdzielacz 4/3 z dźwignią'), opt(FSYM.check(), '', 'Zawór zwrotny')],
+    answer: 0,
+    explain: '<b>Rozdzielacz 3/2 NC</b>: w spoczynku zasilanie (1) jest zablokowane, a siłownik odpowietrzony przez 3. Po wciśnięciu 1 → 2 i tłoczysko się wysuwa. Po puszczeniu powietrze uchodzi przez 3, a sprężyna siłownika cofa tłok. Zawór 2/2 nie ma odpowietrzenia, więc siłownik zostałby pod ciśnieniem.' },
+  { id: 's-fl-da', cat: 'fl', title: 'Siłownik dwustronny',
+    prompt: 'Siłownik dwustronnego działania sterowany elektrycznie: cewka załączona = wysuw, wyłączona = powrót. Jaki zawór wstawić?',
+    fig: () => pnDA(),
+    options: [opt(FSYM.v52(), '', 'Rozdzielacz 5/2 (elektromagnes, sprężyna)'), opt(FSYM.v32(), '', 'Rozdzielacz 3/2 NC'), opt(FSYM.shuttle(), '', 'Zawór przełączający'), opt(FSYM.oneway(), '', 'Zawór dławiąco-zwrotny')],
+    answer: 0,
+    explain: 'Siłownik dwustronny potrzebuje zasilania na przemian do obu komór i odpowietrzenia drugiej. Robi to <b>rozdzielacz 5/2</b>: 1 zasilanie, 2 i 4 wyjścia, 3 i 5 odpowietrzenia, 2 położenia. Zawór 3/2 obsłuży tylko jedną komorę.' },
+  { id: 's-fl-meter', cat: 'fl', title: 'Wolny wysuw, szybki powrót',
+    prompt: 'Wysuw tłoczyska ma być wolny i płynny, a powrót szybki. Co wstawić w przewód do komory tłoczyskowej (po prawej)?',
+    fig: () => pnMeter(),
+    options: [opt(FSYM.oneway(true), '', 'Dławiąco-zwrotny: swobodnie w górę (do siłownika)'), opt(FSYM.oneway(false), '', 'Dławiąco-zwrotny: swobodnie w dół (do zaworu)'), opt(FSYM.throttle(), '', 'Sam zawór dławiący'), opt(FSYM.check(), '', 'Sam zawór zwrotny')],
+    answer: 0,
+    explain: 'Przy wysuwie powietrze <b>wypływa</b> z komory tłoczyskowej w dół, przez dławik. To dławienie na wylocie (meter-out), które w pneumatyce daje płynny ruch. Przy powrocie powietrze wpływa w górę przez zawór zwrotny bez dławienia, więc powrót jest szybki. Zwrotny ustawiony odwrotnie dławiłby powrót, a sam dławik spowolniłby oba ruchy.' },
+  { id: 's-fl-or', cat: 'fl', title: 'Sterowanie z dwóch miejsc',
+    prompt: 'Siłownik ma się wysunąć po wciśnięciu S1 <b>lub</b> S2. Co wstawić tam, gdzie łączą się przewody?',
+    fig: () => pnOr(),
+    options: [opt(FSYM.shuttle(), '', 'Zawór przełączający (LUB)'), opt(FSYM.tee(), '', 'Zwykły trójnik'), opt(FSYM.check(), '', 'Zawór zwrotny'), opt(FSYM.throttle(), '', 'Zawór dławiący')],
+    answer: 0,
+    explain: '<b>Zawór przełączający</b> (funkcja LUB) przepuszcza ciśnienie z dowolnego wejścia i jednocześnie zamyka drugie. Przy zwykłym trójniku powietrze z wciśniętego zaworu uciekałoby przez odpowietrzenie 3 drugiego, niewciśniętego zaworu. Do funkcji I (sterowanie oburęczne) służy zawór podwójnego sygnału.' },
+  { id: 's-fl-filter', cat: 'fl', title: 'Czysty olej',
+    prompt: 'Olej wracający z rozdzielacza do zbiornika niesie zanieczyszczenia. Co zwykle montuje się na linii powrotnej T?',
+    fig: () => hpu({ tq: true }),
+    options: [opt(FSYM.filter(), '', 'Filtr'), opt(FSYM.accum(), '', 'Akumulator'), opt(FSYM.gauge(), '', 'Manometr'), opt(FSYM.check(), '', 'Zawór zwrotny')],
+    answer: 0,
+    explain: '<b>Filtr powrotny</b> zatrzymuje zanieczyszczenia, zanim olej wróci do zbiornika. To najczęstsze miejsce filtra w małych zasilaczach. Linia przerywana w symbolu to wkład. Dodatkowo stosuje się filtr ssawny i filtry ciśnieniowe przed czułymi zaworami.' },
+];
+
+/* ===== Ciśnienie: co zmienić ===== */
+const t = s => ({ text: s });
+const PRESSURE = [
+  { id: 'p-relief', title: 'Za wysokie ciśnienie w układzie',
+    prompt: 'Maksymalne ciśnienie w całym układzie to 160 bar, a ma być 100 bar. Co zmienić?',
+    fig: () => hpu({}),
+    options: [t('Zmniejszyć nastawę zaworu przelewowego (poluzować sprężynę)'), t('Przymknąć dławik na przewodzie do siłownika'), t('Zwiększyć obroty pompy'), t('Dołożyć akumulator hydrauliczny')],
+    answer: 0,
+    explain: 'Maksymalne ciśnienie w układzie z pompą stałej wydajności ustala <b>zawór przelewowy</b>: otwiera się, gdy ciśnienie pokona siłę sprężyny. Słabiej napięta sprężyna = niższe ciśnienie otwarcia. Dławik zmienia prędkość, a przed sobą wręcz podnosi ciśnienie. Obroty pompy zmieniają wydajność, a nie limit ciśnienia.' },
+  { id: 'p-reducing', title: 'Niższe ciśnienie w jednej gałęzi',
+    prompt: 'Prasa (siłownik 1) potrzebuje 120 bar, a docisk (siłownik 2) ma działać przy maks. 30 bar. Co wstawić w gałąź docisku „?”',
+    fig: () => twoCyl(),
+    options: [t('Zawór redukcyjny nastawiony na 30 bar'), t('Nic – obniżyć nastawę zaworu przelewowego do 30 bar'), t('Zawór dławiący'), t('Zawór zwrotny')],
+    answer: 0,
+    explain: '<b>Zawór redukcyjny</b> jest normalnie otwarty i sterowany ciśnieniem z wyjścia: gdy za nim jest 30 bar, przymyka się i utrzymuje 30 bar, choć przed nim jest 120 bar. Obniżenie przelewowego zabrałoby ciśnienie także prasie. Dławik tylko spowalnia ruch: gdy siłownik stanie, przepływ ustaje i ciśnienie za dławikiem wyrówna się do pełnego.' },
+  { id: 'p-symbol', title: 'Rozpoznaj zawór',
+    prompt: 'Który symbol to zawór redukcyjny, utrzymujący niższe ciśnienie na wyjściu (wy)?',
+    options: [opt(FSYM.reducing(), '', 'Zawór redukcyjny'), opt(FSYM.reliefIO(), '', 'Zawór przelewowy'), opt(FSYM.throttle(), '', 'Zawór dławiący'), opt(FSYM.check(), '', 'Zawór zwrotny')],
+    answer: 0,
+    explain: 'Rozpoznasz je po strzałce i linii sterującej. <b>Redukcyjny</b>: strzałka w osi przyłączy (normalnie otwarty), sterowanie z wyjścia. <b>Przelewowy</b>: strzałka przesunięta (normalnie zamknięty), sterowanie z wejścia, wyjście zwykle do zbiornika.' },
+  { id: 'p-calc-force', title: 'Ciśnienie dla siły',
+    prompt: 'Siłownik o średnicy tłoka 50 mm ma pchać z siłą 10 kN. Jakie ciśnienie jest potrzebne (bez strat)?',
+    options: [t('≈ 51 bar'), t('≈ 13 bar'), t('≈ 5 bar'), t('≈ 204 bar')],
+    answer: 0,
+    explain: 'F = p · A, więc p = F / A. A = π · d² / 4 = π · (5 cm)² / 4 ≈ 19,6 cm². p = 10 000 N / 19,6 cm² ≈ 510 N/cm² ≈ <b>51 bar</b> (1 bar = 10 N/cm²). W praktyce dolicza się 10–20% na tarcie i spadki ciśnienia. Błędne odpowiedzi to typowe pomyłki: promień zamiast średnicy (13 lub 204 bar) i 1 bar = 100 N/cm² (5 bar).' },
+  { id: 'p-calc-ratio', title: 'Mniejsza siła docisku',
+    prompt: 'Docisk przy 100 bar daje za dużą siłę – ma być o 40% mniejsza. Na ile ustawić zawór redukcyjny?',
+    options: [t('60 bar'), t('40 bar'), t('71 bar'), t('140 bar')],
+    answer: 0,
+    explain: 'Przy tej samej powierzchni tłoka siła jest wprost proporcjonalna do ciśnienia (F = p · A). 40% mniej siły = 40% mniej ciśnienia: 100 bar · 0,6 = <b>60 bar</b>.' },
+  { id: 'p-pneu', title: 'Pneumatyka dociska za mocno',
+    prompt: 'Siłowniki pneumatyczne maszyny dociskają za mocno. Sieć zakładowa ma 8 bar. Co zmienić przy maszynie?',
+    options: [t('Zmniejszyć ciśnienie na reduktorze w zespole przygotowania powietrza'), t('Przymknąć dławiki na siłownikach'), t('Częściowo przymknąć zawór kulowy na wejściu do maszyny'), t('Wymienić tłumiki na większe')],
+    answer: 0,
+    explain: 'Siłę docisku ustala <b>ciśnienie</b> w siłowniku, a to ustawia się reduktorem (zawór redukcyjny w zespole FRL: filtr, reduktor, smarownica). Dławiki i przymknięty zawór kulowy spowalniają tylko napełnianie. Gdy tłoczysko się zatrzyma, ciśnienie i tak dojdzie do pełnych 8 bar.' },
+  { id: 'p-throttle', title: 'Pułapka: przymknięty dławik',
+    prompt: 'Pompa stałej wydajności, zawór przelewowy 160 bar. Mocno przymykasz dławik przed siłownikiem. Co dzieje się z ciśnieniem za pompą?',
+    options: [t('Rośnie do nastawy przelewowego, a nadmiar oleju wraca przez przelewowy i grzeje olej'), t('Spada, bo płynie mniej oleju'), t('Nie zmienia się'), t('Pompa sama zmniejsza wydajność')],
+    answer: 0,
+    explain: 'Pompa stałej wydajności zawsze tłoczy tyle samo. Dławik ogranicza przepływ do siłownika, więc ciśnienie przed nim rośnie, aż otworzy się <b>zawór przelewowy</b>, a nadmiar oleju płynie do zbiornika pod pełnym ciśnieniem. Ta energia zamienia się w ciepło. Dławik reguluje prędkość, a nie obniża ciśnienia. Wydajność zmniejsza sama tylko pompa zmiennej wydajności z regulatorem ciśnienia.' },
+  { id: 'p-intens', title: 'Multiplikacja ciśnienia',
+    prompt: 'Dławienie na wylocie z komory tłoczyskowej. Przy wysuwie bez obciążenia manometr p₂ pokazuje ponad 250 bar, choć przelewowy ustawiono na 160 bar. Jak to ciśnienie obniżyć?',
+    fig: () => intens(),
+    options: [t('Przenieść dławienie na wlot (meter-in) albo obniżyć nastawę przelewowego'), t('Bardziej przymknąć dławik'), t('Podnieść nastawę zaworu przelewowego'), t('Wymienić manometr na zakres 400 bar')],
+    answer: 0,
+    explain: 'To <b>multiplikacja ciśnienia</b>. Bilans sił na tłoku: p₁ · A₁ = p₂ · A₂ + F. Bez obciążenia (F = 0) p₂ = p₁ · A₁ / A₂. Dla tłoka 50 mm i tłoczyska 32 mm A₁ / A₂ ≈ 1,7, więc 160 bar daje po stronie tłoczyska ok. 270 bar. Niższe p₁ albo dławienie na wlocie usuwa problem. Większy manometr tylko ukryje przeciążenie uszczelnień.' },
+  { id: 'p-psi', title: 'psi na bar',
+    prompt: 'Dokumentacja klucza hydraulicznego (offshore) podaje 3000 psi. Ile to bar?',
+    options: [t('≈ 207 bar'), t('≈ 300 bar'), t('≈ 21 bar'), t('≈ 43 500 bar')],
+    answer: 0,
+    explain: '1 bar ≈ 14,5 psi, czyli 1 psi ≈ 0,069 bar. 3000 psi · 0,069 ≈ <b>207 bar</b>. Szybki szacunek: psi ÷ 14,5. W drugą stronę: bar · 14,5 = psi. Typowe klucze hydrauliczne pracują do 700 bar, czyli ok. 10 000 psi.' },
+  { id: 'p-class', title: 'Klasa manometru',
+    prompt: 'Manometr klasy 1,6 o zakresie 0–250 bar. Jaki jest błąd graniczny dopuszczalny?',
+    options: [t('± 4 bar w całym zakresie'), t('± 1,6 bar'), t('± 1,6% wskazania'), t('± 2,5 bar')],
+    answer: 0,
+    explain: 'Klasa dokładności manometru to błąd graniczny w <b>% zakresu</b>, a nie wskazania: 1,6% · 250 bar = <b>± 4 bar</b> w każdym punkcie skali. Przy wskazaniu 20 bar błąd względny może więc sięgać 20%. Dlatego manometr dobiera się tak, żeby ciśnienie robocze leżało w środkowej części zakresu.' },
+  { id: 'p-area', title: 'Ta sama siła, niższe ciśnienie',
+    prompt: 'Ta sama siła ma być uzyskana przy niższym ciśnieniu. Co zmienić w układzie?',
+    options: [t('Siłownik o większej średnicy tłoka'), t('Siłownik o dłuższym skoku'), t('Siłownik o mniejszej średnicy tłoka'), t('Pompę o większej wydajności')],
+    answer: 0,
+    explain: 'p = F / A: większa powierzchnia tłoka oznacza mniejsze ciśnienie dla tej samej siły. Średnica liczy się w kwadracie: tłok 63 mm zamiast 50 mm ma ok. 1,6 razy większą powierzchnię, więc ciśnienie spada o ok. 37%. Skok i wydajność pompy nie wpływają na siłę.' },
+];
+
+/* ===== Aplikacja ===== */
+const DAY = 86400000;
+const INT = [0, 1, 3, 7, 16, 35]; // dni dla pudełek Leitnera 0–5
+const $ = (s, r = document) => r.querySelector(s);
+const view = $('#view');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const ymd = d => { const x = new Date(d); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+
+/* ---- karty ---- */
+const CARDS = [];
+Object.entries(DECKS).forEach(([dk, d]) => d.cards.forEach(([en, pl, ex]) => CARDS.push({ id: dk + ':' + en, deck: dk, en, pl, ex })));
+const CARD = Object.fromEntries(CARDS.map(c => [c.id, c]));
+
+/* ---- zapis ---- */
+const KEY = 'technauka.v1';
+const DEFAULTS = () => ({ cards: {}, q: {}, sym: {}, streak: { last: null, n: 0 }, prefs: { deck: 'all', dir: 'en', symCat: 'E', symMode: 'quiz', schCat: 'all' }, updatedAt: 0 });
+function normalize(d) { const b = DEFAULTS(); if (!d || typeof d !== 'object') return b; return { ...b, ...d, prefs: { ...b.prefs, ...(d.prefs || {}) }, streak: { ...b.streak, ...(d.streak || {}) }, cards: d.cards || {}, q: d.q || {}, sym: d.sym || {} }; }
+const Store = {
+  s: DEFAULTS(),
+  load() { let d = null; try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { } this.s = normalize(d); },
+  write() { try { localStorage.setItem(KEY, JSON.stringify(this.s)); } catch (e) { } },
+  save() { this.s.updatedAt = Date.now(); this.write(); Sync.schedule(); },
+};
+/* Synchronizacja z kontem Claude (tylko w opublikowanym artefakcie) */
+const Sync = {
+  ref: null, timer: null, busy: false, again: false, on: false,
+  async init() {
+    try {
+      if (!window.claude || typeof window.claude.use !== 'function') return;
+      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      if (!db || !user) return;
+      const uid = await user.id(); if (!uid) return;
+      const ref = db.doc('data/users/' + uid + '/progress');
+      const snap = await ref.get();
+      this.ref = ref; this.on = true;
+      let remote = null;
+      if (snap.exists) { try { remote = normalize(JSON.parse(snap.data().state)); } catch (e) { remote = null; } }
+      if (remote && (remote.updatedAt || 0) > (Store.s.updatedAt || 0)) { Store.s = remote; Store.write(); route(); }
+      else if ((Store.s.updatedAt || 0) > ((remote && remote.updatedAt) || 0)) this.schedule(200);
+      paintSync();
+    } catch (e) { this.ref = null; this.on = false; }
+  },
+  schedule(ms = 2500) { if (!this.ref) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.flush(), ms); },
+  async flush(retry = true) {
+    if (!this.ref) return;
+    if (this.busy) { this.again = true; return; }
+    this.busy = true;
+    try { await this.ref.set({ state: JSON.stringify(Store.s), updatedAt: Store.s.updatedAt }); }
+    catch (e) {
+      const c = e && e.code;
+      if (c === 'unavailable' && retry) setTimeout(() => this.flush(false), 2000 + Math.random() * 2000);
+      else if (c && c !== 'resource_exhausted' && c !== 'unavailable') { this.ref = null; this.on = false; paintSync(); }
+    }
+    this.busy = false;
+    if (this.again) { this.again = false; this.flush(); }
+  },
+};
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && Sync.ref) { clearTimeout(Sync.timer); Sync.flush(); } });
+function paintSync() { const el = $('#syncinfo'); if (el) el.innerHTML = syncText(); }
+const syncText = () => Sync.on ? '<span class="sync-dot on"></span>Postęp zapisuje się na Twoim koncie Claude (telefon i komputer).' : '<span class="sync-dot"></span>Postęp zapisuje się w tej przeglądarce.';
+
+function bumpStreak() {
+  const st = Store.s.streak, today = ymd(Date.now()), yest = ymd(Date.now() - DAY);
+  if (st.last === today) return;
+  st.n = st.last === yest ? st.n + 1 : 1; st.last = today; paintStreak();
+}
+function streakNow() { const st = Store.s.streak; const today = ymd(Date.now()), yest = ymd(Date.now() - DAY); return (st.last === today || st.last === yest) ? st.n : 0; }
+function paintStreak() { const n = streakNow(); $('#streak').innerHTML = `Seria <b>${n}</b> ${n === 1 ? 'dzień' : 'dni'}`; }
+function rec(kind, id, ok) {
+  const m = Store.s[kind]; const r = m[id] || (m[id] = { n: 0, c: 0, last: 0 });
+  r.n++; if (ok) r.c++; r.last = ok ? 1 : 0; bumpStreak(); Store.save();
+}
+
+/* ---- ikony ---- */
+const IC = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>',
+  cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="14" height="16" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10"/><path d="M10 9h6M10 13h4"/></svg>',
+  sym: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14h6l8-6M15 14h7"/><path d="M15 11v6" /></svg>',
+  sch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M20 3v18M4 8h4M12 8h8M8 5v6M12 5v6M4 16h9"/><circle cx="16" cy="16" r="3"/><path d="M19 16h1"/></svg>',
+  gauge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 13l4-4M8 17h8M12 5V3"/></svg>',
+  say: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+};
+const canSpeak = 'speechSynthesis' in window;
+function speak(text) {
+  try {
+    if (!canSpeak) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/\(.*?\)/g, ''));
+    u.lang = 'en-GB'; u.rate = 0.92;
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(v => /^en[-_]GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) { }
+}
+
+/* ===== Fiszki: logika Leitnera ===== */
+const cardState = id => Store.s.cards[id];
+const deckCards = dk => dk === 'all' ? CARDS : CARDS.filter(c => c.deck === dk);
+function deckStats(dk) {
+  const now = Date.now(); let due = 0, fresh = 0, mastered = 0;
+  deckCards(dk).forEach(c => { const st = cardState(c.id); if (!st) fresh++; else { if (st.due <= now) due++; if (st.b >= 4) mastered++; } });
+  return { due, fresh, mastered, total: deckCards(dk).length };
+}
+let cs = null; // sesja fiszek
+function startCards(extra = false) {
+  const dk = Store.s.prefs.deck, now = Date.now(); const pool = deckCards(dk);
+  let ids;
+  if (!extra) {
+    const due = pool.filter(c => cardState(c.id) && cardState(c.id).due <= now).sort((a, b) => cardState(a.id).due - cardState(b.id).due).map(c => c.id);
+    const fresh = shuffle(pool.filter(c => !cardState(c.id)).map(c => c.id)).slice(0, 10);
+    ids = due.slice(0, 20).concat(fresh);
+  } else {
+    ids = pool.slice().sort((a, b) => ((cardState(a.id) || { b: -1 }).b - (cardState(b.id) || { b: -1 }).b) || (Math.random() - .5)).slice(0, 10).map(c => c.id);
+  }
+  cs = { queue: shuffle(ids), i: 0, flipped: false, total: ids.length, res: { again: 0, hard: 0, good: 0 } };
+  renderCards();
+}
+function gradeCard(g) {
+  const id = cs.queue[cs.i]; const now = Date.now();
+  const st = Store.s.cards[id] || { b: 0, due: now };
+  if (g === 'again') { st.b = 0; st.due = now; const pos = Math.min(cs.queue.length, cs.i + 4); cs.queue.splice(pos, 0, id); }
+  else if (g === 'hard') { st.b = Math.max(1, st.b - 1); st.due = now + DAY; }
+  else { st.b = Math.min(5, st.b + 1); st.due = now + INT[st.b] * DAY; }
+  Store.s.cards[id] = st; cs.res[g]++; bumpStreak(); Store.save();
+  cs.i++; cs.flipped = false; renderCards();
+}
+let showList = false, listQuery = '';
+function renderCards() {
+  const p = Store.s.prefs;
+  if (cs && cs.i < cs.queue.length) return renderCardSession();
+  if (cs && cs.i >= cs.queue.length && cs.total) {
+    const r = cs.res; cs = null;
+    view.innerHTML = `<div class="stack">
+      <span class="eyebrow">Fiszki · koniec rundy</span>
+      <h1>Runda zrobiona</h1>
+      <div class="kpis"><div class="kpi"><b>${r.good}</b><span>wiem</span></div><div class="kpi"><b>${r.hard}</b><span>prawie</span></div><div class="kpi"><b>${r.again}</b><span>powtórzone</span></div></div>
+      <p class="muted">Karty oznaczone „wiem” wrócą za 1, 3, 7, 16 i 35 dni. Trudniejsze – jutro.</p>
+      <button class="btn pri wide" data-act="cards-home">Wróć do talii</button></div>`;
+    return;
+  }
+  const st = deckStats(p.deck);
+  const chip = (k, name) => { const s = deckStats(k); return `<button class="chip" data-act="deck" data-k="${k}" aria-pressed="${p.deck === k}">${name}<span class="n">${s.due + s.fresh}</span></button>`; };
+  const n = st.due + Math.min(st.fresh, 10);
+  let html = `<div class="stack">
+    <div><span class="eyebrow">Angielski techniczny</span><h1>Fiszki</h1><p class="lede">Słówka do pracy offshore, w laboratorium i przy PLC. Liczba przy talii = karty do zrobienia dziś.</p></div>
+    <div class="chips" role="group" aria-label="Talia">${chip('all', 'Wszystkie')}${Object.entries(DECKS).map(([k, d]) => chip(k, d.name)).join('')}</div>
+    <div class="row"><span class="muted small">Kierunek:</span><div class="seg" role="group" aria-label="Kierunek"><button data-act="dir" data-k="en" aria-pressed="${p.dir === 'en'}">EN → PL</button><button data-act="dir" data-k="pl" aria-pressed="${p.dir === 'pl'}">PL → EN</button></div></div>
+    <div class="kpis"><div class="kpi"><b>${st.due}</b><span>do powtórki</span></div><div class="kpi"><b>${st.fresh}</b><span>nowe</span></div><div class="kpi"><b>${st.mastered}</b><span>opanowane z ${st.total}</span></div></div>
+    ${n ? `<button class="btn pri wide" data-act="cards-start">Zacznij: ${n} ${n === 1 ? 'karta' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 'karty' : 'kart'}</button>`
+      : `<div class="panel"><b>Na dziś wszystko powtórzone.</b> <span class="muted">Możesz zrobić dodatkową rundę z najsłabszymi kartami.</span></div><button class="btn pri wide" data-act="cards-extra">Dodatkowa runda (10)</button>`}
+    <button class="linkbtn" data-act="toggle-list">${showList ? 'Ukryj listę słówek' : 'Pokaż listę słówek'}</button>`;
+  if (showList) {
+    html += `<label class="eyebrow" for="q-search">Szukaj</label><input id="q-search" class="search" type="search" placeholder="np. bearing, wzorcowanie" value="${esc(listQuery)}" autocomplete="off">
+    <div class="wlist" id="wlist">${wordList()}</div>`;
+  }
+  view.innerHTML = html + '</div>';
+  const inp = $('#q-search'); if (inp) inp.addEventListener('input', e => { listQuery = e.target.value; $('#wlist').innerHTML = wordList(); });
+}
+function wordList() {
+  const q = listQuery.trim().toLowerCase();
+  const items = deckCards(Store.s.prefs.deck).filter(c => !q || (c.en + ' ' + c.pl).toLowerCase().includes(q));
+  if (!items.length) return '<div class="witem"><span class="muted">Brak wyników.</span></div>';
+  return items.map(c => { const b = (cardState(c.id) || { b: 0 }).b; return `<div class="witem"><span class="en">${esc(c.en)}</span><span class="pl">${esc(c.pl)}</span><span class="lvl" title="Poziom ${b} z 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= b ? 'on' : ''}"></i>`).join('')}</span></div>`; }).join('');
+}
+function renderCardSession() {
+  const c = CARD[cs.queue[cs.i]], p = Store.s.prefs; const enFirst = p.dir === 'en';
+  const front = enFirst ? c.en : c.pl, back = enFirst ? c.pl : c.en;
+  const sayBtn = (txt, label) => canSpeak ? `<button class="say" data-act="say" data-t="${esc(txt)}" aria-label="${label}">${IC.say}</button>` : '';
+  const done = Math.min(cs.i, cs.total);
+  view.innerHTML = `<div class="stack">
+    <div class="progress"><span class="stat">${cs.i + 1} / ${cs.queue.length}</span><div class="meter"><i style="width:${pct(done, cs.total)}%"></i></div><button class="linkbtn" data-act="cards-quit">Zakończ</button></div>
+    <div class="flash" data-act="flip" role="button" tabindex="0" aria-label="Odwróć kartę">
+      <span class="tag eyebrow">${esc(DECKS[c.deck].name)}</span>
+      <div class="term">${esc(front)}</div>
+      ${enFirst ? `<div>${sayBtn(c.en, 'Wymowa słowa')}</div>` : ''}
+      ${cs.flipped ? `<hr><div class="tr">${esc(back)}</div>${!enFirst ? `<div>${sayBtn(c.en, 'Wymowa słowa')}</div>` : ''}<div class="ex">„${esc(c.ex)}”</div><div>${sayBtn(c.ex, 'Przeczytaj zdanie')}</div>` : '<div class="hint">Dotknij, żeby zobaczyć odpowiedź</div>'}
+    </div>
+    ${cs.flipped ? `<div class="grade"><button class="btn again" data-act="grade" data-g="again">Nie wiem<small>jeszcze raz</small></button><button class="btn hard" data-act="grade" data-g="hard">Prawie<small>jutro</small></button><button class="btn good" data-act="grade" data-g="good">Wiem<small>za ${INT[Math.min(5, ((cardState(c.id) || { b: 0 }).b) + 1)]} d.</small></button></div>`
+      : `<button class="btn pri wide" data-act="flip">Pokaż odpowiedź</button>`}
+  </div>`;
+}
+
+/* ===== Silnik quizu (symbole, schematy, ciśnienie) ===== */
+const quizzes = {};
+function makeQuiz(kind, list) { return { kind, list: list.map(q => ({ q, order: shuffle(q.options.map((_, i) => i)) })), i: 0, score: 0, picked: null, wrong: [] }; }
+function renderQuiz(z, title, back) {
+  if (z.i >= z.list.length) return renderSummary(z, title, back);
+  const { q, order } = z.list[z.i];
+  const isSym = q.options.some(o => o.svg);
+  const answered = z.picked !== null;
+  const opts = order.map((oi, k) => {
+    const o = q.options[oi]; let cls = 'opt' + (o.svg ? ' sym' : '') + (o.code ? ' code' : '');
+    if (answered) { if (oi === q.answer) cls += ' right'; else if (oi === z.picked) cls += ' wrong'; else cls += ' dim'; }
+    const inner = o.svg
+      ? `${o.svg}${o.tag ? `<span class="tg">${esc(o.tag)}</span>` : ''}${answered && o.name ? `<span class="nm">${esc(o.name)}</span>` : ''}`
+      : `<span class="k">${'ABCD'[k]}</span><span>${o.code ? esc(o.code) : esc(o.text)}</span>`;
+    return `<button class="${cls}" data-act="pick" data-i="${oi}" ${answered ? 'disabled' : ''}>${inner}</button>`;
+  }).join('');
+  let fig = '';
+  if (q.fig) fig = `<figure class="diagram">${q.fig()}</figure>`;
+  else if (q.code) fig = `<pre class="code">${esc(q.code).replace('____', '<span class="blank">____</span>')}</pre>`;
+  else if (q.big) fig = `<div class="symbig">${q.big}</div>`;
+  const ok = answered && z.picked === q.answer;
+  const right = q.options[q.answer];
+  const rightName = right.name || right.text || right.code || '';
+  view.innerHTML = `<div class="stack">
+    <div class="qhead"><div class="progress"><span class="stat">${z.i + 1} / ${z.list.length}</span><div class="meter"><i style="width:${pct(z.i, z.list.length)}%"></i></div><button class="linkbtn" data-act="quiz-quit">Zakończ</button></div>
+    <span class="eyebrow">${esc(title)}${q.title ? ' · ' + esc(q.title) : ''}</span></div>
+    <p class="qprompt">${q.prompt}</p>
+    ${fig}
+    <div class="opts${isSym ? ' grid' : ''}">${opts}</div>
+    ${answered ? `<div class="explain ${ok ? 'ok' : 'bad'}" id="explain"><div class="verdict">${ok ? 'Dobrze!' : 'Nie tym razem'}</div>${!ok ? `<p><b>Poprawnie:</b> ${esc(rightName)}</p>` : ''}${q.en ? `<p class="en-term">EN: ${esc(q.en)}</p>` : ''}<p>${q.explain || ''}</p><button class="btn pri wide" data-act="next">${z.i + 1 < z.list.length ? 'Dalej' : 'Wynik'}</button></div>` : ''}
+  </div>`;
+  if (answered) { const ex = $('#explain'); if (ex && ex.scrollIntoView) ex.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+}
+function renderSummary(z, title, back) {
+  const n = z.list.length;
+  view.innerHTML = `<div class="stack">
+    <span class="eyebrow">${esc(title)} · wynik</span>
+    <div class="row" style="align-items:baseline"><span class="score">${z.score}/${n}</span><span class="muted">${pct(z.score, n)}% poprawnie</span></div>
+    ${z.wrong.length ? `<div class="panel"><h3>Do powtórki</h3><ul class="wronglist">${z.wrong.map(q => `<li>${esc(q.title || q.pl || '')}</li>`).join('')}</ul></div>` : '<div class="panel"><b>Bez błędów.</b></div>'}
+    ${z.wrong.length ? `<button class="btn pri wide" data-act="quiz-wrong">Powtórz błędne (${z.wrong.length})</button>` : ''}
+    <button class="btn wide" data-act="quiz-again">Nowa runda</button>
+    <button class="btn ghost wide" data-act="quiz-back">${esc(back)}</button></div>`;
+}
+function pick(z, oi) {
+  if (z.picked !== null) return;
+  const { q } = z.list[z.i]; z.picked = oi; const ok = oi === q.answer;
+  if (ok) z.score++; else { z.wrong.push(q); try { navigator.vibrate && navigator.vibrate(60); } catch (e) { } }
+  rec(z.kind === 'sym' ? 'sym' : 'q', q.id, ok);
+}
+
+/* ===== Symbole ===== */
+function symPool() { const c = Store.s.prefs.symCat; return c === 'all' ? SYMBOLS : SYMBOLS.filter(s => s.cat === c); }
+const symMastered = s => { const r = Store.s.sym[s.id]; return r && r.last === 1 && r.c >= 2; };
+function symQuestion(s) {
+  const same = SYMBOLS.filter(x => x.cat === s.cat && x.id !== s.id);
+  const others = shuffle(same.slice()).slice(0, 3);
+  const all = [s, ...others];
+  return { id: s.id, title: '', pl: s.pl, en: s.en, prompt: 'Co oznacza ten symbol?', big: s.svg(), options: all.map(x => ({ text: x.pl })), answer: 0, explain: s.note };
+}
+function startSym(list) {
+  let base = list;
+  if (!base) {
+    const pool = symPool();
+    base = shuffle(pool.map(s => { const r = Store.s.sym[s.id]; const w = !r ? 2 : 1 + (r.last ? 0 : 2) + (r.c < 2 ? 1 : 0); return { s, k: Math.random() * w }; })).sort((a, b) => b.k - a.k).slice(0, 10).map(x => x.s);
+  }
+  quizzes.sym = makeQuiz('sym', base.map(symQuestion));
+  renderSymbols();
+}
+function renderSymbols() {
+  const p = Store.s.prefs;
+  if (quizzes.sym) return renderQuiz(quizzes.sym, 'Symbole', 'Wróć do symboli');
+  const pool = symPool(); const m = pool.filter(symMastered).length;
+  const chip = (k, name) => `<button class="chip" data-act="symcat" data-k="${k}" aria-pressed="${p.symCat === k}">${name}</button>`;
+  let html = `<div class="stack">
+    <div><span class="eyebrow">IEC 60617 · ISO 1219 · IEC 61131-3</span><h1>Symbole</h1><p class="lede">Elektryczne, pneumatyczne i hydrauliczne oraz elementy drabinki PLC.</p></div>
+    <div class="chips" role="group" aria-label="Kategoria">${Object.entries(SYM_CATS).map(([k, v]) => chip(k, v)).join('')}${chip('all', 'Wszystkie')}</div>
+    <div class="row"><div class="seg" role="group" aria-label="Tryb"><button data-act="symmode" data-k="quiz" aria-pressed="${p.symMode === 'quiz'}">Quiz</button><button data-act="symmode" data-k="atlas" aria-pressed="${p.symMode === 'atlas'}">Atlas</button></div><span class="stat muted">Opanowane: ${m} / ${pool.length}</span></div>
+    <div class="meter"><i style="width:${pct(m, pool.length)}%"></i></div>`;
+  if (p.symMode === 'quiz') {
+    html += `<div class="panel stack"><h3>Runda: 10 symboli</h3><p class="muted small" style="margin:0">Najczęściej trafiają się symbole, których jeszcze nie znasz albo w których się pomyliłeś. Symbol jest „opanowany” po co najmniej dwóch trafieniach, gdy ostatnia odpowiedź była dobra.</p><button class="btn pri wide" data-act="sym-start">Start</button></div>`;
+  } else {
+    html += `<div class="atlas">${pool.map(s => `<div class="acard">${s.svg()}<h3>${esc(s.pl)}${symMastered(s) ? '<span class="ok-dot" title="Opanowany"></span>' : ''}</h3><span class="en">${esc(s.en)}</span>${s.note ? `<p>${esc(s.note)}</p>` : ''}</div>`).join('')}</div>`;
+  }
+  view.innerHTML = html + '</div>';
+}
+
+/* ===== Schematy i ciśnienie ===== */
+function schPool() { const c = Store.s.prefs.schCat; return c === 'all' ? SCHEMATICS : SCHEMATICS.filter(q => q.cat === c); }
+const doneCount = list => list.filter(q => (Store.s.q[q.id] || {}).last === 1).length;
+function renderSchem() {
+  if (quizzes.sch) return renderQuiz(quizzes.sch, 'Uzupełnij schemat', 'Wróć do schematów');
+  const p = Store.s.prefs; const pool = schPool(); const d = doneCount(pool);
+  const chip = (k, name) => { const l = k === 'all' ? SCHEMATICS : SCHEMATICS.filter(q => q.cat === k); return `<button class="chip" data-act="schcat" data-k="${k}" aria-pressed="${p.schCat === k}">${name}<span class="n">${doneCount(l)}/${l.length}</span></button>`; };
+  const wrongIds = pool.filter(q => (Store.s.q[q.id] || {}).n && !(Store.s.q[q.id] || {}).last);
+  view.innerHTML = `<div class="stack">
+    <div><span class="eyebrow">Drabinka · sterowanie stycznikowe · pneumatyka · hydraulika</span><h1>Uzupełnij schemat</h1><p class="lede">Na schemacie brakuje elementu w miejscu „?”. Wybierz, co tam pasuje – po odpowiedzi zobaczysz wyjaśnienie.</p></div>
+    <div class="chips" role="group" aria-label="Kategoria">${chip('all', 'Wszystkie')}${Object.entries(SCH_CATS).map(([k, v]) => chip(k, v)).join('')}</div>
+    <div class="meter"><i style="width:${pct(d, pool.length)}%"></i></div>
+    <button class="btn pri wide" data-act="sch-start">Start: ${pool.length} zadań</button>
+    ${wrongIds.length ? `<button class="btn wide" data-act="sch-wrong">Tylko błędne (${wrongIds.length})</button>` : ''}
+    <div class="panel"><h3>Zadania w tej kategorii</h3><ul class="wronglist">${pool.map(q => `<li>${esc(SCH_CATS[q.cat])}: ${esc(q.title)}${(Store.s.q[q.id] || {}).last === 1 ? ' ✓' : ''}</li>`).join('')}</ul></div>
+  </div>`;
+}
+function renderPressure() {
+  if (quizzes.pr) return renderQuiz(quizzes.pr, 'Ciśnienie', 'Wróć');
+  const d = doneCount(PRESSURE);
+  const wrongIds = PRESSURE.filter(q => (Store.s.q[q.id] || {}).n && !(Store.s.q[q.id] || {}).last);
+  view.innerHTML = `<div class="stack">
+    <div><span class="eyebrow">F = p · A · 1 bar = 10 N/cm² ≈ 14,5 psi</span><h1>Ciśnienie</h1><p class="lede">Co zmienić w układzie, żeby obniżyć ciśnienie? Zawory przelewowe i redukcyjne, pułapki z dławikami, obliczenia siły i jednostek, klasa manometru.</p></div>
+    <div class="row"><span class="stat">Poprawne: ${d} / ${PRESSURE.length}</span></div>
+    <div class="meter"><i style="width:${pct(d, PRESSURE.length)}%"></i></div>
+    <button class="btn pri wide" data-act="pr-start">Start: ${PRESSURE.length} zadań</button>
+    ${wrongIds.length ? `<button class="btn wide" data-act="pr-wrong">Tylko błędne (${wrongIds.length})</button>` : ''}
+    <div class="panel stack"><h3>Ściąga</h3>
+      <p class="small" style="margin:0"><b>Przelewowy</b> – normalnie zamknięty, ogranicza maksymalne ciśnienie całego układu, sterowany z wejścia.<br><b>Redukcyjny</b> – normalnie otwarty, daje niższe, stałe ciśnienie w jednej gałęzi, sterowany z wyjścia.<br><b>Dławik</b> – zmienia prędkość (przepływ), nie obniża ciśnienia statycznego.<br><b>Siła</b> – F = p · A, A = π · d² / 4.</p></div>
+  </div>`;
+}
+
+/* ===== Start ===== */
+function renderHome() {
+  const cst = deckStats('all');
+  const symM = SYMBOLS.filter(symMastered).length, schD = doneCount(SCHEMATICS), prD = doneCount(PRESSURE);
+  const todo = cst.due + Math.min(cst.fresh, 10);
+  view.innerHTML = `<div class="stack">
+    <div><span class="eyebrow">PLC · elektryka · hydraulika · angielski</span><h1>Nauka na dziś</h1></div>
+    <div class="panel today"><div><div class="eyebrow">Fiszki do zrobienia</div><div class="big">${todo}</div><div class="muted small">${cst.due} do powtórki, ${Math.min(cst.fresh, 10)} nowych</div></div>
+      <a class="btn pri" href="#fiszki" data-act="go-cards">Powtórz</a></div>
+    <div class="tiles">
+      <a class="tile" href="#fiszki"><span class="ico">${IC.cards}</span><h3>Fiszki EN</h3><p>Offshore, metrologia, PLC – z wymową.</p><span class="stat">${cst.mastered} / ${cst.total} opanowane</span><div class="meter"><i style="width:${pct(cst.mastered, cst.total)}%"></i></div></a>
+      <a class="tile" href="#symbole"><span class="ico">${IC.sym}</span><h3>Symbole</h3><p>Elektryczne, ISO 1219, drabinka PLC.</p><span class="stat">${symM} / ${SYMBOLS.length} opanowane</span><div class="meter"><i style="width:${pct(symM, SYMBOLS.length)}%"></i></div></a>
+      <a class="tile" href="#schematy"><span class="ico">${IC.sch}</span><h3>Uzupełnij schemat</h3><p>Brakujący styk, zawór albo blok.</p><span class="stat">${schD} / ${SCHEMATICS.length} poprawnie</span><div class="meter"><i style="width:${pct(schD, SCHEMATICS.length)}%"></i></div></a>
+      <a class="tile" href="#cisnienie"><span class="ico">${IC.gauge}</span><h3>Ciśnienie</h3><p>Co zmienić, żeby je obniżyć.</p><span class="stat">${prD} / ${PRESSURE.length} poprawnie</span><div class="meter"><i style="width:${pct(prD, PRESSURE.length)}%"></i></div></a>
+    </div>
+    <div class="foot"><span id="syncinfo">${syncText()}</span>
+      <div id="resetbox"><button class="linkbtn" data-act="reset-ask">Wyczyść cały postęp</button></div></div>
+  </div>`;
+}
+
+/* ===== Routing i zdarzenia ===== */
+const ROUTES = { '': renderHome, fiszki: renderCards, symbole: renderSymbols, schematy: renderSchem, cisnienie: renderPressure };
+let current = '';
+function route() {
+  const h = location.hash.replace('#', ''); current = ROUTES[h] ? h : '';
+  ROUTES[current]();
+  document.querySelectorAll('.tabs a').forEach(a => a.setAttribute('aria-current', a.dataset.r === current ? 'page' : 'false'));
+  paintStreak();
+}
+window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+const ACTIONS = {
+  deck: el => { Store.s.prefs.deck = el.dataset.k; Store.write(); renderCards(); },
+  dir: el => { Store.s.prefs.dir = el.dataset.k; Store.write(); renderCards(); },
+  'cards-start': () => { startCards(false); window.scrollTo(0, 0); },
+  'cards-extra': () => { startCards(true); window.scrollTo(0, 0); },
+  'cards-quit': () => { cs = null; renderCards(); },
+  'cards-home': () => { cs = null; renderCards(); },
+  'toggle-list': () => { showList = !showList; renderCards(); },
+  flip: () => { if (cs && !cs.flipped) { cs.flipped = true; renderCardSession(); } },
+  say: el => speak(el.dataset.t),
+  grade: el => gradeCard(el.dataset.g),
+  symcat: el => { Store.s.prefs.symCat = el.dataset.k; Store.write(); renderSymbols(); },
+  symmode: el => { Store.s.prefs.symMode = el.dataset.k; Store.write(); renderSymbols(); },
+  'sym-start': () => { startSym(); window.scrollTo(0, 0); },
+  schcat: el => { Store.s.prefs.schCat = el.dataset.k; Store.write(); renderSchem(); },
+  'sch-start': () => { quizzes.sch = makeQuiz('q', shuffle(schPool().slice())); renderSchem(); window.scrollTo(0, 0); },
+  'sch-wrong': () => { quizzes.sch = makeQuiz('q', shuffle(schPool().filter(q => (Store.s.q[q.id] || {}).n && !(Store.s.q[q.id] || {}).last))); renderSchem(); window.scrollTo(0, 0); },
+  'pr-start': () => { quizzes.pr = makeQuiz('q', shuffle(PRESSURE.slice())); renderPressure(); window.scrollTo(0, 0); },
+  'pr-wrong': () => { quizzes.pr = makeQuiz('q', shuffle(PRESSURE.filter(q => (Store.s.q[q.id] || {}).n && !(Store.s.q[q.id] || {}).last))); renderPressure(); window.scrollTo(0, 0); },
+  pick: el => { const z = activeQuiz(); if (!z) return; pick(z, +el.dataset.i); rerenderQuiz(); },
+  next: () => { const z = activeQuiz(); if (!z) return; z.i++; z.picked = null; rerenderQuiz(); window.scrollTo(0, 0); },
+  'quiz-quit': () => { const k = quizKey(); if (k) delete quizzes[k]; ROUTES[current](); },
+  'quiz-back': () => { const k = quizKey(); if (k) delete quizzes[k]; ROUTES[current](); },
+  'quiz-again': () => {
+    const k = quizKey(); if (!k) return;
+    if (k === 'sym') { delete quizzes.sym; startSym(); }
+    else if (k === 'sch') { quizzes.sch = makeQuiz('q', shuffle(schPool().slice())); renderSchem(); }
+    else { quizzes.pr = makeQuiz('q', shuffle(PRESSURE.slice())); renderPressure(); }
+    window.scrollTo(0, 0);
+  },
+  'quiz-wrong': () => {
+    const k = quizKey(); if (!k) return; const w = quizzes[k].wrong.slice();
+    if (k === 'sym') { startSym(SYMBOLS.filter(s => w.some(q => q.id === s.id))); }
+    else { quizzes[k] = makeQuiz('q', shuffle(w)); ROUTES[current](); }
+    window.scrollTo(0, 0);
+  },
+  'go-cards': () => { },
+  'reset-ask': () => { $('#resetbox').innerHTML = `<div class="confirm"><span>Usunąć postęp fiszek, quizów i serię?</span><button class="btn danger" data-act="reset-do">Tak, wyczyść</button><button class="btn ghost" data-act="reset-no">Anuluj</button></div>`; },
+  'reset-no': () => { $('#resetbox').innerHTML = '<button class="linkbtn" data-act="reset-ask">Wyczyść cały postęp</button>'; },
+  'reset-do': () => { const prefs = Store.s.prefs; Store.s = DEFAULTS(); Store.s.prefs = prefs; Store.save(); cs = null; Object.keys(quizzes).forEach(k => delete quizzes[k]); renderHome(); paintStreak(); },
+};
+const quizKey = () => current === 'symbole' ? 'sym' : current === 'schematy' ? 'sch' : current === 'cisnienie' ? 'pr' : null;
+const activeQuiz = () => { const k = quizKey(); return k ? quizzes[k] : null; };
+function rerenderQuiz() { ROUTES[current](); }
+view.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el || !view.contains(el)) return;
+  const fn = ACTIONS[el.dataset.act]; if (!fn) return;
+  if (el.dataset.act === 'flip' && e.target.closest('.say')) return;
+  fn(el);
+});
+view.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.flash')) { e.preventDefault(); ACTIONS.flip(); }
+});
+document.addEventListener('keydown', e => {
+  if (current === 'fiszki' && cs && cs.flipped && !e.target.matches('input')) { if (e.key === '1') gradeCard('again'); if (e.key === '2') gradeCard('hard'); if (e.key === '3') gradeCard('good'); }
+});
+
+Store.load();
+route();
+Sync.init();
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !window.claude) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => { }); });
+}
+
+</script>
+</body>
+</html>

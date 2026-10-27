@@ -1,0 +1,30 @@
+TechNauka – nauka PLC, elektryki, pneumatyki, hydrauliki i angielskiego technicznego
+==================================================================================
+
+Co jest w folderze
+- index.html            – cała aplikacja (treści, rysunki, logika)
+- manifest.webmanifest  – dane do instalacji na telefonie
+- sw.js                 – praca bez internetu po instalacji
+- icons\                – ikony aplikacji
+
+Na komputerze
+Kliknij dwa razy index.html. Aplikacja otworzy się w przeglądarce.
+Postęp (fiszki, quizy, seria dni) zapisuje ta przeglądarka na tym komputerze.
+
+Na telefonie z Androidem
+1) Najszybciej: otwórz link do aplikacji z rozmowy z Claude.
+   Postęp zapisuje się na Twoim koncie Claude, więc jest ten sam na telefonie i komputerze.
+2) Jako osobna aplikacja z ikoną, działająca bez internetu:
+   folder musi być dostępny pod adresem https (np. GitHub Pages).
+   Otwórz ten adres w Chrome → menu ⋮ → „Zainstaluj aplikację” (albo „Dodaj do ekranu głównego”).
+   Plik otwarty prosto z pamięci telefonu nie zainstaluje się jako aplikacja.
+
+Moduły
+- Fiszki EN: offshore, metrologia, PLC. Powtórki co 1, 3, 7, 16 i 35 dni (system Leitnera), wymowa po angielsku.
+- Symbole: elektryczne (IEC 60617), pneumatyka i hydraulika (ISO 1219), drabinka PLC. Quiz i atlas.
+- Uzupełnij schemat: brakujący styk, zawór albo blok w schematach PLC, elektrycznych i płynowych.
+- Ciśnienie: co zmienić w układzie, żeby obniżyć ciśnienie, plus obliczenia (F = p · A, psi ↔ bar, klasa manometru).
+
+Własne słówka
+Fiszki są na początku skryptu w index.html (const DECKS = ...).
+Format jednej karty: ['angielski', 'polski', 'zdanie przykładowe po angielsku'],
